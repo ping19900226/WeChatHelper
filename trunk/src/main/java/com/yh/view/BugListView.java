@@ -1,25 +1,18 @@
 package com.yh.view;
 
 import com.yh.request.BugzillaRequestHandler;
+import com.yh.request.RequestHandler;
 import com.yh.request.entity.Bug;
-import javafx.application.Application;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import javafx.concurrent.Task;
 import javafx.event.EventHandler;
-import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
-import javafx.scene.control.cell.TextFieldTableCell;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
-import javafx.stage.Stage;
-import javafx.stage.WindowEvent;
-import javafx.util.Callback;
-import org.apache.http.client.CookieStore;
 
 import java.net.CookieHandler;
 import java.util.List;
@@ -27,7 +20,12 @@ import java.util.List;
 public class BugListView extends View{
    public void start0(AnchorPane root) throws Exception {
       handler = new BugzillaRequestHandler();
-      handler.login("yihuanwang@yonghongtech.com", "yihuan");
+      RequestHandler.AuthenticationInfo info = handler.getDefaultAuthenticationInfo();
+
+      if(info == null || !info.isLogin()) {
+         handler.login("yihuanwang@yonghongtech.com", "yihuan");
+      }
+
       view = new TableView();
 
       view.prefWidthProperty().bind(root.widthProperty());

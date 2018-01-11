@@ -125,7 +125,7 @@ public abstract class View extends Application {
    }
 
    public void afterClose() {
-      System.exit(0);
+      // do nothing
    }
 
    public File showChooseDirDialog() {
