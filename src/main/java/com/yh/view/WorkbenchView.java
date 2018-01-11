@@ -1,13 +1,11 @@
 package com.yh.view;
 
-import javafx.event.ActionEvent;
+import com.yh.view.component.QuickButton;
 import javafx.event.EventHandler;
 import javafx.scene.control.Button;
-import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.GridPane;
-import javafx.stage.Stage;
 
 public class WorkbenchView extends View{
 
@@ -23,7 +21,7 @@ public class WorkbenchView extends View{
 
    @Override
    public int getPrefWidth() {
-      return 200;
+      return 380;
    }
 
    @Override
@@ -37,28 +35,22 @@ public class WorkbenchView extends View{
    }
 
    private void addQuickBtn() {
-      ImageView shareImage = new ImageView(new Image("http://pic.58pic.com/58pic/14/81/65/92W58PICS7s_1024.jpg"));
-      shareImage.setFitWidth(50);
-      shareImage.setFitHeight(50);
-      Button shareBtn = new Button("share");
-      shareBtn.setGraphic(shareImage);
+      QuickButton shareBtn = new QuickButton("share", "http://pic.58pic" +
+         ".com/58pic/14/81/65/92W58PICS7s_1024.jpg");
 
-      shareBtn.setOnAction(new EventHandler<ActionEvent>() {
-         public void handle(ActionEvent event) {
+      shareBtn.setOnAction(new EventHandler<MouseEvent>() {
+         public void handle(MouseEvent event) {
             openView(new ShareFileView());
          }
       });
 
       quickBtnPane.add(shareBtn, 0, 0);
 
-      ImageView bugImage = new ImageView(new Image("http://pic.58pic.com/58pic/14/81/65/92W58PICS7s_1024.jpg"));
-      bugImage.setFitWidth(50);
-      bugImage.setFitHeight(50);
-      Button bugBtn = new Button("bug");
-      bugBtn.setGraphic(bugImage);
+      QuickButton bugBtn = new QuickButton("bug", "http://pic.58pic" +
+         ".com/58pic/14/81/65/92W58PICS7s_1024.jpg");
 
-      bugBtn.setOnAction(new EventHandler<ActionEvent>() {
-         public void handle(ActionEvent event) {
+      bugBtn.setOnAction(new EventHandler<MouseEvent>() {
+         public void handle(MouseEvent event) {
             openView(new BugListView());
          }
       });
