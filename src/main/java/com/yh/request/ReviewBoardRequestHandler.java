@@ -60,6 +60,11 @@ public class ReviewBoardRequestHandler extends RequestHandler {
       }
    }
 
+   @Override
+   public int getId() {
+      return 2;
+   }
+
    public static class ReviewBoardAuthenticationInfo implements AuthenticationInfo {
 
       public boolean isLogin() {

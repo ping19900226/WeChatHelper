@@ -13,13 +13,11 @@ import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
-
-import java.net.CookieHandler;
-import java.util.List;
+import java.util.List;;
 
 public class BugListView extends View{
    public void start0(AnchorPane root) throws Exception {
-      handler = new BugzillaRequestHandler();
+      handler = (BugzillaRequestHandler) RequestHandler.getRequestHandler(1);
       RequestHandler.AuthenticationInfo info = handler.getDefaultAuthenticationInfo();
 
       if(info == null || !info.isLogin()) {

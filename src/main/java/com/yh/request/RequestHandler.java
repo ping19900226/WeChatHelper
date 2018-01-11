@@ -3,7 +3,6 @@ package com.yh.request;
 import org.apache.http.*;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.*;
-import org.apache.http.client.protocol.HttpClientContext;
 import org.apache.http.impl.client.*;
 import org.apache.http.util.EntityUtils;
 
@@ -17,6 +16,20 @@ public abstract class RequestHandler {
       client = RequestHelper.getHttpClient();
    }
 
+   public static RequestHandler getRequestHandler(int id) {
+      for(RequestHandler handler : handlers) {
+         if(handler.getId() == id) {
+            return handler;
+         }
+      }
+
+      return null;
+   }
+
+   public static void regist(RequestHandler handler) {
+      handlers.add(handler);
+   }
+
    public void setDefaultAuthenticationInfo(AuthenticationInfo info) {
       this.info = info;
    }
@@ -26,6 +39,8 @@ public abstract class RequestHandler {
    }
 
    public abstract void login(String username, String password);
+
+   public abstract int getId();
 
    protected void get(String url, ResponseHandler handler) throws Exception {
       HttpGet httpGet = new HttpGet(url);
@@ -122,8 +137,8 @@ public abstract class RequestHandler {
    }
 
    private static AuthenticationInfo info;
+   private static List<RequestHandler> handlers = new ArrayList<RequestHandler>();
    private CloseableHttpClient client;
-   private static List<RequestHandler> handlers;
 }
 
 

@@ -13,6 +13,8 @@ public class Launcher extends Application {
    public void start(Stage primaryStage) throws Exception {
       URLConnection.setContentHandlerFactory(new YHContentHandlerFactory());
       CookieHandler.setDefault(RequestHelper.getCookieHander());
+      RequestHandler.regist(new BugzillaRequestHandler());
+      RequestHandler.regist(new ReviewBoardRequestHandler());
       new WorkbenchView().start(new Stage());
    }
 
