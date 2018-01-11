@@ -6,12 +6,11 @@ import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
-
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
 public class BugzillaRequestHandler extends RequestHandler{
+
    public BugzillaRequestHandler() {
       setDefaultAuthenticationInfo(new BugzillaAuthenticationInfo());
    }
@@ -41,6 +40,11 @@ public class BugzillaRequestHandler extends RequestHandler{
       catch(Exception e) {
          e.printStackTrace();
       }
+   }
+
+   @Override
+   public int getId() {
+      return 1;
    }
 
    public List<Bug> getBugList() {
