@@ -14,9 +14,7 @@ import java.util.*;
 public abstract class RequestHandler {
 
    {
-      HttpClientContext localContext = HttpClientContext.create();
-      localContext.setCookieStore(CookieStore.getCookieStore());
-      client = HttpClients.custom().setDefaultCookieStore(CookieStore.getCookieStore()).build();
+      client = RequestHelper.getHttpClient();
    }
 
    public void setDefaultAuthenticationInfo(AuthenticationInfo info) {
