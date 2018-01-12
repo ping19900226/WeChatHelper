@@ -2,18 +2,14 @@ package com.yh.view;
 
 import com.yh.core.DownloadListener;
 import com.yh.core.YHFileUtil;
-import javafx.application.Application;
 import javafx.beans.value.*;
 import javafx.concurrent.Worker;
-import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.web.*;
-import javafx.stage.*;
 import javafx.util.Callback;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-
 import java.io.*;
 import java.net.*;
 import java.nio.charset.Charset;
@@ -83,8 +79,6 @@ public class ExplorerView extends View{
                         }
                      }
                   });
-
-
                }
 
             }
