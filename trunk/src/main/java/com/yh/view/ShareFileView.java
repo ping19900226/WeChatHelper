@@ -3,17 +3,12 @@ package com.yh.view;
 import com.yh.core.*;
 import com.yh.view.component.YHVBox;
 import com.yh.view.data.YHFileStack;
-import javafx.application.Application;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.event.*;
-import javafx.scene.*;
 import javafx.scene.control.*;
-import javafx.scene.image.Image;
 import javafx.scene.input.*;
 import javafx.scene.layout.*;
-import javafx.stage.*;
-
 import java.io.*;
 import java.util.*;
 

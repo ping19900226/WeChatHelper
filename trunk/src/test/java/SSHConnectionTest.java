@@ -1,8 +1,16 @@
-import com.yh.core.SSHConnection;
 
-public class SSHConnectionTest {
+import com.yh.view.SSHView;
+import javafx.application.Application;
+import javafx.stage.Stage;
+
+public class SSHConnectionTest extends Application{
 
    public static void main(String [] arg) {
-      new SSHConnection().connect("47.91.249.95", "root", "LOVE0226wang", 22);
+      launch(arg);
+   }
+
+   @Override
+   public void start(Stage primaryStage) throws Exception {
+      new SSHView().start(primaryStage);
    }
 }

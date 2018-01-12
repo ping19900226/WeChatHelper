@@ -2,11 +2,14 @@ package com.yh.core;
 
 import com.jcraft.jsch.*;
 import com.jcraft.jsch.agentproxy.*;
+import jdk.internal.util.xml.impl.Input;
 
 import java.io.*;
 import java.net.Socket;
 import java.net.UnknownHostException;
 import java.nio.charset.Charset;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Properties;
 import java.util.Scanner;
 
@@ -53,24 +56,23 @@ public class SSHConnection {
 
 //         session.setPortForwardingR(80, "127.0.0.1",
 //            10226);
-         int assinged_port= session.setPortForwardingL(10226, host, 10226);
-         System.out.println("localhost:"+assinged_port+" -> "+host+":" + 10226);
-         Channel channel=session.openChannel("shell");
-
-         ((ChannelShell)channel).setAgentForwarding(true);
-
-         channel.setInputStream(System.in);
-         channel.setOutputStream(System.out);
-
-         channel.connect();
-
+         //int assinged_port= session.setPortForwardingL(10226, host, 10226);
+        // System.out.println("localhost:"+assinged_port+" -> "+host+":" + 10226);
+//         Channel channel=session.openChannel("shell");
+//
+//         ((ChannelShell)channel).setAgentForwarding(true);
+//
+//         channel.setInputStream(System.in);
+//         channel.setOutputStream(System.out);
+//
+//         channel.connect();
       }
       catch(JSchException e) {
          e.printStackTrace();
       }
    }
 
-   public String execute(String cmd) {
+   public List<String> execute(String cmd) {
       ChannelExec channelExec = null;
       BufferedReader reader = null;
 
@@ -84,13 +86,13 @@ public class SSHConnection {
          InputStream in = channelExec.getInputStream();
          reader = new BufferedReader(new InputStreamReader(in, Charset.forName("UTF-8")));
          String buf = null;
-         StringBuilder sb = new StringBuilder();
+         List<String> rs = new ArrayList<String>();
 
          while ((buf = reader.readLine()) != null) {
-            sb.append(buf).append("\n");
+            rs.add(buf);
          }
 
-         return sb.toString();
+         return rs;
 
       }
       catch(IOException e) {
@@ -116,6 +118,28 @@ public class SSHConnection {
          }
 
       }
+   }
+
+   public ChannelShell execute(InputStream is, OutputStream os) {
+      try {
+         ChannelShell shell = (ChannelShell) session.openChannel("shell");
+
+         //os = channelExec.getOutputStream();
+         //channelExec.setOutputStream(os);
+//         channelExec.setInputStream(is);
+
+         shell.setOutputStream(os);
+         shell.setInputStream(is);
+         shell.connect();
+         //os = shell.getOutputStream();
+         //is = shell.getInputStream();
+         return shell;
+      }
+      catch(JSchException e) {
+         e.printStackTrace();
+      }
+
+      return null;
    }
 
    public void close() {
