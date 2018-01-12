@@ -1,5 +1,6 @@
 package com.yh.request;
 
+import com.yh.request.entity.DataGrid;
 import com.yh.util.StringUtil;
 import com.yh.request.entity.Bug;
 import org.jsoup.Jsoup;
@@ -47,7 +48,7 @@ public class BugzillaRequestHandler extends RequestHandler{
       return 1;
    }
 
-   public List<Bug> getBugList() {
+   public DataGrid<List<String>> getBugList() {
       String username = getDefaultAuthenticationInfo().getLoginInfo().toString();
       StringBuilder url = new StringBuilder();
       url.append("http://192.168.1.120/buglist.cgi?");
@@ -57,8 +58,9 @@ public class BugzillaRequestHandler extends RequestHandler{
       url.append("&field0-0-0=bug_status&type0-0-0=notequals&value0-0-0=UNCONFIRMED");
       url.append("&field0-0-1=reporter&type0-0-1=equals");
       url.append("&value0-0-1=" + username);
+      url.append("&columnlist=all");
 
-      final List<Bug> bugs = new ArrayList<Bug>();
+      final DataGrid<List<String>> data = new DataGrid<List<String>>();
 
       try {
          get(url.toString(), new ResponseHandler() {
@@ -67,19 +69,36 @@ public class BugzillaRequestHandler extends RequestHandler{
                   String text = StringUtil.toString(response.getContent());
                   Document doc = Jsoup.parse(text);
                   Element table = doc.select("table.bz_buglist").get(0);
+                  Element hr = table.select("tr.bz_buglist_header").get(0);
+                  Elements hcs = hr.select("th");
+                  List<String> headers = new ArrayList<String>();
+                  data.setHeaders(headers);
+
+                  for(Element hc : hcs) {
+                     headers.add(hc.text());
+                  }
+
                   Elements trs = table.select("tr.bz_bugitem");
+                  List<List<String>> bugs = new ArrayList<List<String>>();
+                  data.setDatas(bugs);
 
                   for(Element tr : trs) {
                      Elements tds = tr.select("td");
-                     Bug bug = new Bug();
-                     bug.setId(Integer.parseInt(tds.get(0).text()));
-                     bug.setType(tds.get(1).text());
-                     bug.setPriority(tds.get(2).text());
-                     bug.setReporter(tds.get(3).text());
-                     bug.setStatus(tds.get(5).text());
-                     bug.setSummary(tds.get(7).text());
+                     List<String> bcs = new ArrayList<String>();
+                     bugs.add(bcs);
 
-                    bugs.add(bug);
+                     for(Element td : tds) {
+                        bcs.add(td.text());
+                     }
+//                     Bug bug = new Bug();
+//                     bug.setId(Integer.parseInt(tds.get(0).text()));
+//                     bug.setType(tds.get(1).text());
+//                     bug.setPriority(tds.get(2).text());
+//                     bug.setReporter(tds.get(3).text());
+//                     bug.setStatus(tds.get(5).text());
+//                     bug.setSummary(tds.get(7).text());
+//
+//                     bugs.add(bug);
                   }
 
                }
@@ -89,7 +108,7 @@ public class BugzillaRequestHandler extends RequestHandler{
             }
          });
 
-         return bugs;
+         return data;
       }
       catch(Exception e) {
          e.printStackTrace();
