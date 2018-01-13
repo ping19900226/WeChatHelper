@@ -44,18 +44,9 @@ public class SSHConnection {
          session.setConfig(config); // 为Session对象设置properties
          int timeout = 60000000;
          session.setTimeout(timeout); // 设置timeout时间
-
-         //ProxyHTTP proxyhttp = new  ProxyHTTP (host, 80);
-
-         //session.setProxy(proxyhttp);
-         //ProxySOCKS4 ps = new ProxySOCKS4("127.0.0.1", 10226);
-         //session.setProxy(ps);
          session.setOutputStream(System.out);
          session.connect(); // 通过Session建立链接
 
-
-//         session.setPortForwardingR(80, "127.0.0.1",
-//            10226);
          //int assinged_port= session.setPortForwardingL(10226, host, 10226);
         // System.out.println("localhost:"+assinged_port+" -> "+host+":" + 10226);
 //         Channel channel=session.openChannel("shell");
