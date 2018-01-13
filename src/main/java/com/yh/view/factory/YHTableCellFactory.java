@@ -1,4 +1,4 @@
-package com.yh.request;
+package com.yh.view.factory;
 
 import com.yh.view.ExplorerView;
 import com.yh.view.View;
@@ -24,7 +24,7 @@ public class YHTableCellFactory<T> implements Callback<TableColumn<List<String>,
    public TableCell call(TableColumn param) {
       TableCell cell = new TableCell();
       cell.setPrefHeight(40);
-      cell.setText(values == null ? param.getText() : values.get(index).toString());
+      cell.setText(values == null ? "" : values.get(index).toString());
       cell.setUserData(index);
 
       cell.setOnMouseClicked(new EventHandler<MouseEvent>() {

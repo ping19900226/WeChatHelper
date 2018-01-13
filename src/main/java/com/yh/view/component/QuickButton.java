@@ -14,8 +14,8 @@ public class QuickButton extends VBox {
 
    public QuickButton(String text, String icon) {
       ImageView image = new ImageView(new Image(icon));
-      image.setFitWidth(50);
-      image.setFitHeight(50);
+      image.setFitWidth(80);
+      image.setFitHeight(80);
       this.getChildren().add(image);
 
       Label label = new Label();

@@ -1,17 +1,12 @@
-package com.yh.request;
+package com.yh.view.factory;
 
 import com.yh.view.View;
 import javafx.beans.property.*;
-import javafx.beans.value.ObservableIntegerValue;
 import javafx.beans.value.ObservableValue;
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
-import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
 import javafx.util.Callback;
 
 import java.util.List;
-import java.util.Map;
 
 public class ArrayValueFactory<S, T> implements Callback<TableColumn.CellDataFeatures<List<S>,T>,
    ObservableValue<T>> {
@@ -29,8 +24,7 @@ public class ArrayValueFactory<S, T> implements Callback<TableColumn.CellDataFea
    public ObservableValue<T> call(TableColumn.CellDataFeatures<List<S>, T> param) {
       List<S> items = param.getValue();
       S value = items.get(index);
-      param.getTableColumn().setCellFactory(new YHTableCellFactory(context, index, items));
-
+      //param.getTableColumn().setCellFactory(new YHTableCellFactory(context, index, items));
 
       if (value instanceof ObservableValue) {
          return (ObservableValue)value;
