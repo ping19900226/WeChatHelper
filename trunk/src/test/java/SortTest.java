@@ -9,5 +9,12 @@ public class SortTest {
       Collections.sort(Arrays.asList(str));
 
       System.out.println(Arrays.toString(str));
+
+      System.out.println(System.getProperty("user.home"));
+      System.out.println(System.getProperty("user.dir"));
+      System.out.println(System.getProperty("path.separator"));
+      System.out.println(System.getProperty("file.separator"));
+
+      System.out.println(Arrays.toString("1bc|df|df".split("\\|")));
    }
 }

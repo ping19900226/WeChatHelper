@@ -11,10 +11,12 @@ import java.net.URLConnection;
 public class Launcher extends Application {
    @Override
    public void start(Stage primaryStage) throws Exception {
+      System.setProperty ("jsse.enableSNIExtension", "false");
       URLConnection.setContentHandlerFactory(new YHContentHandlerFactory());
       CookieHandler.setDefault(RequestHelper.getCookieHander());
       RequestHandler.regist(new BugzillaRequestHandler());
       RequestHandler.regist(new ReviewBoardRequestHandler());
+      RequestHandler.regist(new WeChatRequestHandler());
       new WorkbenchView().start(new Stage());
    }
 

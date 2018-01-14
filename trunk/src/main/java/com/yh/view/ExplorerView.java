@@ -24,7 +24,6 @@ public class ExplorerView extends View{
    public void start0(AnchorPane root) throws Exception {
 
       view = new WebView();
-
       engine = view.getEngine();
       engine.load(url);
       root.getChildren().add(view);
