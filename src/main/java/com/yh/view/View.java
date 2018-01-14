@@ -29,6 +29,8 @@ public abstract class View extends Application {
       primaryStage.setScene(new Scene(root));
       views = new ArrayList<View>();
 
+      //primaryStage.getScene().getStylesheets().add(Thread.currentThread().getContextClassLoader().getResource("style.css"));
+
       primaryStage.getIcons().add(new Image("http://pic.90sjimg.com/design/00/07/85/23/59316fe4b66ae.png"));
 
       start0(root);
