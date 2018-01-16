@@ -1,17 +1,6 @@
-package com.yh.request.entity;
+package com.yh.request.entity.wx;
 
-public class Error {
-
-
-    //	<error>
-//		<ret>0</ret>
-//		<message></message>
-//		<skey>@crypt_d60d32d2_fdac679cb62fd327df9abd0ca97845ce</skey>
-//		<wxsid>ptipIuAcnOU+rxqZ</wxsid>
-//		<wxuin>1690000439</wxuin>
-//		<pass_ticket>5I6r9cgB4gsMmak%2FX4fAZCrHe%2BpKhMUPKQvPpS3%2BpQ0%2FiT3Rd%2F10vW4zoa5SgTVH</pass_ticket>
-//		<isgrayscale>1</isgrayscale>
-//	</error>
+public class AuthInfo {
     private String message;
     private String skey;
     private String wxsid;
@@ -21,6 +10,8 @@ public class Error {
     private int ret;
     private String deceiveId;
     private String syncKey;
+    private String userName;
+    private String nickName;
 
     public String getMessage() {
         return message;
@@ -79,5 +70,21 @@ public class Error {
 
     public void setSyncKey(String syncKey) {
         this.syncKey = syncKey;
+    }
+
+    public String getUserName() {
+        return userName;
+    }
+
+    public void setUserName(String userName) {
+        this.userName = userName;
+    }
+
+    public String getNickName() {
+        return nickName;
+    }
+
+    public void setNickName(String nickName) {
+        this.nickName = nickName;
     }
 }

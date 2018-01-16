@@ -3,10 +3,11 @@ package com.yh.request;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
-import com.yh.request.entity.AuthInfo;
-import com.yh.request.entity.Contact;
+import com.yh.request.entity.wx.AuthInfo;
+import com.yh.request.entity.wx.Contact;
 import com.yh.request.entity.FinalData;
-import com.yh.request.entity.Message;
+import com.yh.request.entity.wx.Error;
+import com.yh.request.entity.wx.Message;
 import com.yh.util.JSONUtil;
 import com.yh.util.RandomUtil;
 import com.yh.util.XMLUtil;
@@ -102,7 +103,7 @@ System.out.println(n);
     public void newLoginPage(String url) throws Exception {
         String xml = getContent(url);
         System.out.println(xml);
-        com.yh.request.entity.Error info = XMLUtil.xmlToObject(xml, com.yh.request.entity.Error.class);
+        Error info = XMLUtil.xmlToObject(xml, Error.class);
 
         info.setDeceiveId(getDeviceId());
         getDefaultAuthenticationInfo().login();
@@ -642,7 +643,7 @@ System.out.println(n);
 
         @Override
         public void setLoginInfo(Object info) {
-            com.yh.request.entity.Error error = (com.yh.request.entity.Error) info;
+            Error error = (Error) info;
             this.info = new AuthInfo();
             this.info.setDeceiveId(error.getDeceiveId());
             this.info.setPass_ticket(error.getPass_ticket());
@@ -654,7 +655,7 @@ System.out.println(n);
             this.info.setWxuin(error.getWxuin());
         }
 
-        private com.yh.request.entity.AuthInfo info;
+        private AuthInfo info;
         private boolean login;
     }
 }

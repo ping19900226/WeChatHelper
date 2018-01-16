@@ -19,7 +19,7 @@ public class QRCodeView extends View {
     public void start0(AnchorPane root) throws Exception {
         VBox imageBox = new VBox();
         root.getChildren().add(imageBox);
-        ImageView image = new ImageView();
+        final ImageView image = new ImageView();
         image.setFitWidth(300);
         image.setFitHeight(300);
         final Label l = new Label();
@@ -32,10 +32,7 @@ public class QRCodeView extends View {
         try {
             handler.getMain();
             String appid = handler.loadJs();
-            System.out.println(appid);
-            String uuid = handler.jsLogin(appid);
-            System.out.println(uuid);
-
+            final String uuid = handler.jsLogin(appid);
 
             handler.getQrcode(uuid, new Callback<InputStream>() {
 
