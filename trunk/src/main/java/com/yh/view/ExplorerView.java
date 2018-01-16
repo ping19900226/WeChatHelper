@@ -7,6 +7,7 @@ import javafx.concurrent.Worker;
 import javafx.scene.control.Alert;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.web.*;
+import javafx.stage.Stage;
 import javafx.util.Callback;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -16,6 +17,10 @@ import java.nio.charset.Charset;
 import java.util.Map;
 
 public class ExplorerView extends View{
+
+   public ExplorerView() {
+
+   }
 
    public ExplorerView(String url) {
       this.url = url;
@@ -41,6 +46,10 @@ public class ExplorerView extends View{
       });
 
       handle();
+   }
+
+   public WebEngine getEngine() {
+      return engine;
    }
 
    private void handle() {
@@ -85,8 +94,11 @@ public class ExplorerView extends View{
       });
 
       engine.setCreatePopupHandler(new Callback<PopupFeatures, WebEngine>() {
-         @Override public WebEngine call(PopupFeatures param) {
-            return engine;
+         @Override
+         public WebEngine call(PopupFeatures param) {
+            ExplorerView view = new ExplorerView();
+            view.open();
+            return view.getEngine();
          }
       });
    }
