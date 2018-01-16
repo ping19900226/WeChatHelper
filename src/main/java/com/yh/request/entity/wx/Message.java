@@ -1,4 +1,4 @@
-package com.yh.request.entity;
+package com.yh.request.entity.wx;
 
 public class Message {
 

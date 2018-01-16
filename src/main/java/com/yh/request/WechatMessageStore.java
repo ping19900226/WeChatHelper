@@ -1,10 +1,9 @@
 package com.yh.request;
 
-import com.yh.request.entity.Message;
+import com.yh.request.entity.wx.Message;
 import com.yh.util.JSONUtil;
 
 import java.io.*;
-import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.List;
 
