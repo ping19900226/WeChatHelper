@@ -5,6 +5,7 @@ import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.event.EventHandler;
 import javafx.scene.Scene;
+import javafx.scene.control.Alert;
 import javafx.scene.image.Image;
 import javafx.scene.layout.AnchorPane;
 import javafx.stage.*;
@@ -18,6 +19,24 @@ public abstract class View extends Application {
    public static final int INIT_CONTENT_WIDTH = 800;
    public static final int INIT_CONTENT_HEIGHT = 600;
    public static final int SCROLL_BAR_WIDTH = 15;
+
+   public void open() {
+      try {
+         start(new Stage());
+      }
+      catch(Exception e) {
+         new Alert(Alert.AlertType.ERROR, "窗口打开失败").show();
+      }
+   }
+
+   public void open(Stage stage) {
+      try {
+         start(stage);
+      }
+      catch(Exception e) {
+         new Alert(Alert.AlertType.ERROR, "窗口打开失败").show();
+      }
+   }
 
    public final void start(Stage primaryStage) throws Exception {
       this.primaryStage = primaryStage;
