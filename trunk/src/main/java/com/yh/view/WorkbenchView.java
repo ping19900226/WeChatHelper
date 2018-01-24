@@ -40,7 +40,7 @@ public class WorkbenchView extends View{
 
       shareBtn.setOnAction(new EventHandler<MouseEvent>() {
          public void handle(MouseEvent event) {
-            openView(new ShareFileView());
+            openView(new ShareFileView("192.168.1.134", "root", "forDEV123"));
          }
       });
 

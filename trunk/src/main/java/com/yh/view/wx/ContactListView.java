@@ -61,7 +61,7 @@ public class ContactListView extends View {
         inputArea.prefHeightProperty().bind(box.prefHeightProperty());
         box.getChildren().add(inputArea);
 
-        TextArea area = new TextArea();
+        final TextArea area = new TextArea();
         area.prefWidthProperty().bind(inputArea.prefWidthProperty());
         inputArea.getChildren().add(area);
 
@@ -83,10 +83,10 @@ public class ContactListView extends View {
         inputArea.getChildren().add(rsArea);
 
         labels =new HashMap<String, Label>(cs.size());
-        maps = new HashMap<>(cs.size());
+        maps = new HashMap<String, String>(cs.size());
 
         for (Contact c : cs) {
-            Label l = new Label();
+           final  Label l = new Label();
             l.setGraphic(new ImageView(new Image(c.getHeadImgUrl())));
             l.setText(c.getNickName().replace("<span>[.*]</span>", ""));
             l.setPrefWidth(300);

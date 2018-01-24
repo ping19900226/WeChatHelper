@@ -42,7 +42,10 @@ public class YHFileUtil {
          while((count = is.read(bs)) > 0) {
             fos.write(bs, 0, count);
             read += count;
-            listener.download(read);
+
+            if(listener != null) {
+               listener.download(read);
+            }
          }
 
          fos.flush();

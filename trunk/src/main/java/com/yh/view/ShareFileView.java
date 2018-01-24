@@ -14,6 +14,16 @@ import java.util.*;
 
 public class ShareFileView extends View{
 
+   private ShareFileView() {
+      // do nothing.
+   }
+
+   public ShareFileView(String host, String username, String password) {
+      this.host = host;
+      this.username = username;
+      this.password = password;
+   }
+
    public void start0(AnchorPane root) throws Exception {
       contentPane = new FlowPane();
       contentPane.setStyle("-fx-background-color: #FFFFFF");
@@ -43,7 +53,7 @@ public class ShareFileView extends View{
       getRoot().getChildren().add(tipLabel);
       //primaryStage.setScene(new Scene(rootPane));
 
-      conn =  new ShareConnection("192.168.1.134", "root", "forDEV123");
+      conn =  new ShareConnection(host, username, password);
 
       list(null, false);
 
@@ -212,6 +222,9 @@ public class ShareFileView extends View{
    private static final int STATUS_BAR_HEIGHT = 30;
    private static final int MENU_BAR_HEIGHT = 25;
 
+   private String username;
+   private String password;
+   private String host;
    private FlowPane contentPane;
    private ShareConnection conn;
    private Stack<YHFile> history = new YHFileStack();

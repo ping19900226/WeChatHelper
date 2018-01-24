@@ -1,5 +1,6 @@
 package com.yh.view;
 
+import com.yh.util.Resource;
 import javafx.application.Application;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
@@ -11,6 +12,7 @@ import javafx.scene.layout.AnchorPane;
 import javafx.stage.*;
 
 import java.io.File;
+import java.io.InputStream;
 import java.util.*;
 
 public abstract class View extends Application {
@@ -50,7 +52,7 @@ public abstract class View extends Application {
 
       //primaryStage.getScene().getStylesheets().add(Thread.currentThread().getContextClassLoader().getResource("style.css"));
 
-      primaryStage.getIcons().add(new Image("http://pic.90sjimg.com/design/00/07/85/23/59316fe4b66ae.png"));
+      primaryStage.getIcons().add(new Image(Resource.loadImage("logo.png")));
 
       start0(root);
 
