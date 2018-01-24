@@ -5,31 +5,16 @@ import com.yh.util.StringUtil;
 import org.apache.http.*;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.*;
-import org.apache.http.config.Registry;
-import org.apache.http.config.RegistryBuilder;
-import org.apache.http.conn.socket.ConnectionSocketFactory;
-import org.apache.http.conn.socket.PlainConnectionSocketFactory;
-import org.apache.http.conn.ssl.NoopHostnameVerifier;
-import org.apache.http.conn.ssl.SSLConnectionSocketFactory;
 import org.apache.http.cookie.Cookie;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.entity.mime.MultipartEntityBuilder;
-import org.apache.http.entity.mime.content.FileBody;
 import org.apache.http.impl.client.*;
-import org.apache.http.impl.conn.PoolingHttpClientConnectionManager;
-import org.apache.http.ssl.SSLContextBuilder;
-import org.apache.http.ssl.TrustStrategy;
 import org.apache.http.util.EntityUtils;
-
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.Charset;
-import java.security.cert.CertificateException;
-import java.security.cert.X509Certificate;
 import java.util.*;
-
-import static org.apache.http.HttpVersion.HTTP;
 
 public abstract class RequestHandler {
 
@@ -292,7 +277,7 @@ public abstract class RequestHandler {
       void setLoginInfo(Object info);
    }
 
-   private static AuthenticationInfo info;
+   private AuthenticationInfo info;
    private static List<RequestHandler> handlers = new ArrayList<RequestHandler>();
    private CloseableHttpClient client;
    private static final String HTTP = "http";
