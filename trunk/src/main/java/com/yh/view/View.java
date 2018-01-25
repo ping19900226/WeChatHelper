@@ -10,9 +10,9 @@ import javafx.scene.control.Alert;
 import javafx.scene.image.Image;
 import javafx.scene.layout.AnchorPane;
 import javafx.stage.*;
-
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import java.io.File;
-import java.io.InputStream;
 import java.util.*;
 
 public abstract class View extends Application {
@@ -27,6 +27,7 @@ public abstract class View extends Application {
          start(new Stage());
       }
       catch(Exception e) {
+         log.error(e);
          new Alert(Alert.AlertType.ERROR, "窗口打开失败").show();
       }
    }
@@ -36,6 +37,7 @@ public abstract class View extends Application {
          start(stage);
       }
       catch(Exception e) {
+         log.error(e);
          new Alert(Alert.AlertType.ERROR, "窗口打开失败").show();
       }
    }
@@ -43,6 +45,8 @@ public abstract class View extends Application {
    public final void start(Stage primaryStage) throws Exception {
       this.primaryStage = primaryStage;
       primaryStage.setWidth(getPrefWidth());
+      primaryStage.setMaximized(isMaximized());
+
       root = new AnchorPane();
       root.setPrefWidth(getPrefWidth());
       root.setPrefHeight(getPrefHeight());
@@ -50,9 +54,9 @@ public abstract class View extends Application {
       primaryStage.setScene(new Scene(root));
       views = new ArrayList<View>();
 
-      //primaryStage.getScene().getStylesheets().add(Thread.currentThread().getContextClassLoader().getResource("style.css"));
+      primaryStage.getScene().getStylesheets().add(Resource.getStylePath("style.css"));
 
-      primaryStage.getIcons().add(new Image(Resource.loadImage("logo.png")));
+      primaryStage.getIcons().add(new Image(Resource.loadImage("logo_b_1.png")));
 
       start0(root);
 
@@ -79,17 +83,23 @@ public abstract class View extends Application {
    }
 
    public final void openView(View v) {
+      openView(v, false);
+   }
+
+   public final void openView(View v, boolean newWindow) {
       if(v.unique() && views.contains(v)) {
          v.show();
          return;
       }
 
       try {
-         openView0(v);
+         openView0(v, newWindow);
          views.add(v);
       }
       catch(Exception e) {
+         log.error(e);
          e.printStackTrace();
+         new Alert(Alert.AlertType.ERROR, "窗口打开失败").show();
       }
    }
 
@@ -135,11 +145,11 @@ public abstract class View extends Application {
       return root;
    }
 
-   public void show() {
+   public final void show() {
       primaryStage.show();
    }
 
-   public void setTitle(String title) {
+   public final void setTitle(String title) {
       primaryStage.setTitle(title);
    }
 
@@ -149,6 +159,10 @@ public abstract class View extends Application {
 
    public void afterClose() {
       // do nothing
+   }
+
+   public boolean isMaximized() {
+      return true;
    }
 
    public File showChooseDirDialog() {
@@ -204,13 +218,18 @@ public abstract class View extends Application {
 
    public abstract void start0(AnchorPane root) throws Exception;
 
-   private void openView0(View v) throws Exception {
+   private void openView0(View v, boolean newWindow) throws Exception {
       Stage stage = new Stage();
-      stage.initOwner(primaryStage.getScene().getWindow());
+
+      if(!newWindow) {
+         stage.initOwner(primaryStage.getScene().getWindow());
+      }
+
       v.start(stage);
    }
 
    private Stage primaryStage;
    private AnchorPane root;
    private List<View> views;
+   private Log log = LogFactory.getLog(View.class);
 }

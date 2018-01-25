@@ -1,8 +1,10 @@
 package com.yh.view;
 
-import com.yh.view.component.QuickButton;
+import com.yh.util.Resource;
+import com.yh.util.Style;
+import com.yh.view.component.ImageButton;
 import javafx.event.EventHandler;
-import javafx.scene.control.Button;
+import javafx.geometry.Insets;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.GridPane;
@@ -11,9 +13,13 @@ public class WorkbenchView extends View{
 
    @Override
    public void start0(AnchorPane root) throws Exception {
+      Style.setStyle(root, "-fx-background-color:#FFFFFF;");
+      setTitle("工作台");
+
       quickBtnPane = new GridPane();
       quickBtnPane.prefWidthProperty().bind(root.widthProperty());
       quickBtnPane.setPrefHeight(100);
+      quickBtnPane.setPadding(new Insets(10));
       root.getChildren().add(quickBtnPane);
 
       addQuickBtn();
@@ -34,20 +40,23 @@ public class WorkbenchView extends View{
       System.exit(0);
    }
 
+   @Override
+   public boolean isMaximized() {
+      return false;
+   }
+
    private void addQuickBtn() {
-      QuickButton shareBtn = new QuickButton("share", "http://pic.58pic" +
-         ".com/58pic/14/81/65/92W58PICS7s_1024.jpg");
+      ImageButton shareBtn = new ImageButton("文件共享", Resource.getImagePath("share.png"));
 
       shareBtn.setOnAction(new EventHandler<MouseEvent>() {
          public void handle(MouseEvent event) {
-            openView(new ShareFileView("192.168.1.134", "root", "forDEV123"));
+            openView(new ShareFileView("192.168.1.134", "root", "forDEV123"), true);
          }
       });
 
       quickBtnPane.add(shareBtn, 0, 0);
 
-      QuickButton bugBtn = new QuickButton("bug", "http://pic.58pic" +
-         ".com/58pic/14/81/65/92W58PICS7s_1024.jpg");
+      ImageButton bugBtn = new ImageButton("BUG系统", Resource.getImagePath("bug.png"));
 
       bugBtn.setOnAction(new EventHandler<MouseEvent>() {
          public void handle(MouseEvent event) {
@@ -56,7 +65,7 @@ public class WorkbenchView extends View{
       });
 
       quickBtnPane.add(bugBtn, 1, 0);
-      quickBtnPane.add(new Button("sql"), 0, 1);
+
    }
 
    private GridPane quickBtnPane;

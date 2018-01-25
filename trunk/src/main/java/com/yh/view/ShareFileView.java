@@ -1,6 +1,8 @@
 package com.yh.view;
 
 import com.yh.core.*;
+import com.yh.util.Resource;
+import com.yh.view.component.ImageButton;
 import com.yh.view.component.YHVBox;
 import com.yh.view.data.YHFileStack;
 import javafx.beans.value.ChangeListener;
@@ -57,7 +59,7 @@ public class ShareFileView extends View{
 
       list(null, false);
 
-      setTitle("192.168.1.134");
+      setTitle(host);
 
 
       root.widthProperty().addListener(new ChangeListener<Number>() {
@@ -120,17 +122,16 @@ public class ShareFileView extends View{
                MenuItem open = new MenuItem();
                open.setUserData(f);
                m.getItems().add(open);
+               String name = f.getName().replace("/", "");
 
                if(f.isDirectory()) {
                   dc ++;
-                  b = new YHVBox("http://pic.58pic.com/58pic/14/81/65/92W58PICS7s_1024.jpg", f
-                     .getName());
+                  b = new ImageButton(name, Resource.getImagePath("folder.png"));
                   open.setText("打开");
                }
                else {
                   fc ++;
-                  b = new YHVBox("http://img.article.pchome" +
-                     ".net/00/35/33/84/pic_lib/wm/Crystal_Generic.jpg", f.getName());
+                  b = new ImageButton(name, Resource.getImagePath("file.png"));
                   open.setText("下载");
                }
 
