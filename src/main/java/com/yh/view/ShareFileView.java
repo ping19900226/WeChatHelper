@@ -193,7 +193,7 @@ public class ShareFileView extends View{
          }
 
          if(file != null && !file.isEmpty()) {
-            addBack(file);
+            //addBack(file);
          }
          else {
             history.clear();
@@ -201,7 +201,7 @@ public class ShareFileView extends View{
 
       }
       catch(IOException e) {
-         addBack(file);
+         //addBack(file);
          new Alert(Alert.AlertType.ERROR, e.getMessage()).show();
       }
 
@@ -218,8 +218,9 @@ public class ShareFileView extends View{
    }
 
    private void addBack(YHFile file) {
-      VBox b = new ImageButton("http://ico.ooopic.com/iconset01/pretty-office-icons-v5/gif/93212.gif",
-         "返回");
+      VBox b = new ImageButton("返回","http://ico.ooopic" +
+         ".com/iconset01/pretty-office-icons-v5/gif/93212.gif"
+         );
       b.setUserData(file);
 
       b.setOnMouseClicked(new EventHandler<MouseEvent>() {
@@ -253,7 +254,7 @@ public class ShareFileView extends View{
 
       view.setOnMouseClicked(new EventHandler<MouseEvent>() {
          public void handle(MouseEvent event) {
-            if(event.getClickCount() == 2 && event.getButton() == MouseButton.PRIMARY) {
+            if(event.getClickCount() == 1 && event.getButton() == MouseButton.PRIMARY) {
                contentPane.getChildren().clear();
                list(history.pop(), true);
             }

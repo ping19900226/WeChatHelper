@@ -28,23 +28,23 @@ public class ImageButton extends VBox {
 
    private void build(String text, String icon, int width, int height) {
       ImageView image = new ImageView(new Image(icon));
-      image.setFitWidth(width);
-      image.setFitHeight(height);
+      image.setFitWidth(width - 10);
+      image.setFitHeight(height - 10);
       //VBox.setMargin(image, new Insets(10));
       this.getChildren().add(image);
 
       if(text != null) {
          Label label = new Label();
          label.setWrapText(true);
-         label.setPrefWidth(60);
+         label.setPrefWidth(width);
          label.setPrefHeight(30);
          label.setText(text);
          this.getChildren().add(label);
       }
 
       this.setCursor(Cursor.HAND);
-      this.setPrefWidth(70);
-      this.setPrefHeight(90);
+      this.setPrefWidth(width);
+      this.setPrefHeight(text == null ? height : height + 30);
       this.setAlignment(Pos.CENTER);
       this.setCursor(Cursor.HAND);
       this.setPadding(new Insets(10));
