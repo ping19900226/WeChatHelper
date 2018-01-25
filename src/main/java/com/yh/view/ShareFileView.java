@@ -2,19 +2,36 @@ package com.yh.view;
 
 import com.yh.core.*;
 import com.yh.util.Resource;
+import com.yh.util.Style;
 import com.yh.view.component.ImageButton;
-import com.yh.view.component.YHVBox;
 import com.yh.view.data.YHFileStack;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.event.*;
 import javafx.scene.control.*;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.input.*;
 import javafx.scene.layout.*;
 import java.io.*;
 import java.util.*;
 
 public class ShareFileView extends View{
+
+   private static final int STATUS_BAR_HEIGHT = 30;
+   private static final int MENU_BAR_HEIGHT = 25;
+   private static final int QUICK_BAR_HEIGHT = 30;
+
+   private String username;
+   private String password;
+   private String host;
+   private FlowPane contentPane;
+   private ShareConnection conn;
+   private Stack<YHFile> history = new YHFileStack();
+   private YHFile lastPath = null;
+   private Label tipLabel;
+   private AnchorPane menuBarPane;
+   private HBox quickBtnPane;
 
    private ShareFileView() {
       // do nothing.
@@ -38,13 +55,22 @@ public class ShareFileView extends View{
       getRoot().getChildren().add(menuBarPane);
       addMenuBar();
 
+      quickBtnPane = new HBox();
+      quickBtnPane.prefWidthProperty().bind(root.widthProperty());
+      quickBtnPane.setLayoutX(0);
+      quickBtnPane.setLayoutY(MENU_BAR_HEIGHT);
+      quickBtnPane.setPrefHeight(QUICK_BAR_HEIGHT);
+      Style.setStyle(quickBtnPane, "-fx-background-color:#FFFFFF;");
+      getRoot().getChildren().add(quickBtnPane);
+      addQuickBar();
+
       contentPane.setPrefWidth(INIT_CONTENT_WIDTH);
-      contentPane.setPrefHeight(INIT_CONTENT_HEIGHT - STATUS_BAR_HEIGHT - MENU_BAR_HEIGHT);
+      contentPane.setPrefHeight(INIT_CONTENT_HEIGHT - STATUS_BAR_HEIGHT - MENU_BAR_HEIGHT - QUICK_BAR_HEIGHT);
 
       final ScrollPane scrollPane = new ScrollPane(contentPane);
       scrollPane.setFitToHeight(true);
       scrollPane.setFitToWidth(true);
-      scrollPane.setLayoutY(MENU_BAR_HEIGHT);
+      scrollPane.setLayoutY(MENU_BAR_HEIGHT + QUICK_BAR_HEIGHT);
       getRoot().getChildren().add(scrollPane);
 
       tipLabel = new Label("欢迎");
@@ -70,7 +96,8 @@ public class ShareFileView extends View{
 
       root.heightProperty().addListener(new ChangeListener<Number>() {
          public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
-            contentPane.setPrefHeight(newValue.doubleValue() - MENU_BAR_HEIGHT - STATUS_BAR_HEIGHT);
+            contentPane.setPrefHeight(newValue.doubleValue() - MENU_BAR_HEIGHT -
+               STATUS_BAR_HEIGHT - QUICK_BAR_HEIGHT);
             tipLabel.setLayoutY(newValue.doubleValue() - STATUS_BAR_HEIGHT);
          }
       });
@@ -191,7 +218,7 @@ public class ShareFileView extends View{
    }
 
    private void addBack(YHFile file) {
-      VBox b = new YHVBox("http://ico.ooopic.com/iconset01/pretty-office-icons-v5/gif/93212.gif",
+      VBox b = new ImageButton("http://ico.ooopic.com/iconset01/pretty-office-icons-v5/gif/93212.gif",
          "返回");
       b.setUserData(file);
 
@@ -220,16 +247,17 @@ public class ShareFileView extends View{
       }
    }
 
-   private static final int STATUS_BAR_HEIGHT = 30;
-   private static final int MENU_BAR_HEIGHT = 25;
+   private void addQuickBar() {
+      ImageButton view = new ImageButton(Resource.getImagePath("back_b_1.png"), 30,30);
+      quickBtnPane.getChildren().add(view);
 
-   private String username;
-   private String password;
-   private String host;
-   private FlowPane contentPane;
-   private ShareConnection conn;
-   private Stack<YHFile> history = new YHFileStack();
-   private YHFile lastPath = null;
-   private Label tipLabel;
-   private AnchorPane menuBarPane;
+      view.setOnMouseClicked(new EventHandler<MouseEvent>() {
+         public void handle(MouseEvent event) {
+            if(event.getClickCount() == 2 && event.getButton() == MouseButton.PRIMARY) {
+               contentPane.getChildren().clear();
+               list(history.pop(), true);
+            }
+         }
+      });
+   }
 }
