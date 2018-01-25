@@ -14,24 +14,38 @@ import javafx.scene.layout.VBox;
 
 public class ImageButton extends VBox {
 
+   public ImageButton(String icon, int width, int height) {
+      build(null, icon, width, height);
+   }
+
+   public ImageButton(String text, String icon, int width, int height) {
+      build(text, icon, width, height);
+   }
+
    public ImageButton(String text, String icon) {
+      build(text, icon, 60, 60);
+   }
+
+   private void build(String text, String icon, int width, int height) {
       ImageView image = new ImageView(new Image(icon));
-      image.setFitWidth(60);
-      image.setFitHeight(60);
+      image.setFitWidth(width);
+      image.setFitHeight(height);
       //VBox.setMargin(image, new Insets(10));
       this.getChildren().add(image);
 
-      Label label = new Label();
-      label.setWrapText(true);
-      label.setPrefWidth(60);
-      label.setPrefHeight(30);
-      label.setText(text);
+      if(text != null) {
+         Label label = new Label();
+         label.setWrapText(true);
+         label.setPrefWidth(60);
+         label.setPrefHeight(30);
+         label.setText(text);
+         this.getChildren().add(label);
+      }
 
       this.setCursor(Cursor.HAND);
       this.setPrefWidth(70);
       this.setPrefHeight(90);
       this.setAlignment(Pos.CENTER);
-      this.getChildren().add(label);
       this.setCursor(Cursor.HAND);
       this.setPadding(new Insets(10));
       Style style = Style.parse(this.getStyle());
