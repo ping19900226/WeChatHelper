@@ -39,8 +39,9 @@ public class YHVBox extends VBox {
       this.setAlignment(Pos.CENTER);
 
       ImageView img = new ImageView();
-      img.setFitWidth(90);
-      img.setFitHeight(90);
+      img.setFitWidth(80);
+      img.setFitHeight(80);
+      VBox.setMargin(img, new Insets(10));
       Image image = new Image(icon);
       img.setImage(image);
       this.getChildren().add(img);
