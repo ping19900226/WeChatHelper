@@ -33,7 +33,6 @@ public class YHTableCellFactory<T> implements Callback<TableColumn<List<String>,
             TableCell cell0 = (TableCell)event.getSource();
             if(event.getButton() == MouseButton.PRIMARY &&
                event.getClickCount() == 2) {
-               System.out.println("*******=======");
                TableRow v = (TableRow) event.getSource();
                String url = "http://192.168.1.120//show_bug.cgi?id=" + v.getUserData().toString();
                context.openView(new ExplorerView(url));

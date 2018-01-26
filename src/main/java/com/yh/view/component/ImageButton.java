@@ -1,5 +1,6 @@
 package com.yh.view.component;
 
+import com.yh.util.StringUtil;
 import com.yh.util.Style;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
@@ -36,9 +37,11 @@ public class ImageButton extends VBox {
       if(text != null) {
          Label label = new Label();
          label.setWrapText(true);
-         label.setPrefWidth(width);
+         label.setPrefWidth(width - 10);
          label.setPrefHeight(30);
+         label.setMinHeight(30);
          label.setText(text);
+
          this.getChildren().add(label);
       }
 
@@ -48,6 +51,7 @@ public class ImageButton extends VBox {
       this.setAlignment(Pos.CENTER);
       this.setCursor(Cursor.HAND);
       this.setPadding(new Insets(10));
+
       Style style = Style.parse(this.getStyle());
       style.setStyle("-fx-border-width: 1px");
       style.setStyle("-fx-border-color: #FFFFFF");

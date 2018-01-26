@@ -8,9 +8,8 @@ import com.yh.view.data.YHFileStack;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.event.*;
+import javafx.geometry.Insets;
 import javafx.scene.control.*;
-import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
 import javafx.scene.input.*;
 import javafx.scene.layout.*;
 import java.io.*;
@@ -66,6 +65,7 @@ public class ShareFileView extends View{
 
       contentPane.setPrefWidth(INIT_CONTENT_WIDTH);
       contentPane.setPrefHeight(INIT_CONTENT_HEIGHT - STATUS_BAR_HEIGHT - MENU_BAR_HEIGHT - QUICK_BAR_HEIGHT);
+      contentPane.setPadding(new Insets(10));
 
       final ScrollPane scrollPane = new ScrollPane(contentPane);
       scrollPane.setFitToHeight(true);
@@ -79,14 +79,12 @@ public class ShareFileView extends View{
       tipLabel.setLayoutY(INIT_CONTENT_HEIGHT - STATUS_BAR_HEIGHT);
       tipLabel.prefWidthProperty().bind(getRoot().widthProperty());
       getRoot().getChildren().add(tipLabel);
-      //primaryStage.setScene(new Scene(rootPane));
 
       conn =  new ShareConnection(host, username, password);
 
       list(null, false);
 
       setTitle(host);
-
 
       root.widthProperty().addListener(new ChangeListener<Number>() {
          public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
@@ -163,6 +161,7 @@ public class ShareFileView extends View{
                }
 
                b.setUserData(f);
+               FlowPane.setMargin(b, new Insets(5,5,5,5));
                contentPane.getChildren().add(b);
 
                b.setOnMouseClicked(new EventHandler<MouseEvent>() {

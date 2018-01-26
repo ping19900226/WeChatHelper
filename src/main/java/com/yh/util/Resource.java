@@ -19,7 +19,8 @@ public class Resource {
    }
 
    public static String getStylePath(String name) {
-      return Resource.class.getClassLoader().getResource("style" + File.separator + name).getPath();
+      return "file:" + Resource.class.getClassLoader().getResource("style" + File.separator +
+         name).getPath();
    }
 
    public static String downloadPath() {
