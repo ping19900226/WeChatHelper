@@ -69,7 +69,6 @@ public class BugListView extends View{
                   public void handle(MouseEvent event) {
                      if(event.getButton() == MouseButton.PRIMARY &&
                         event.getClickCount() == 2) {
-                        System.out.println("----------================");
                         TableRow v = (TableRow) event.getSource();
                         String url = "http://192.168.1.120//show_bug.cgi?id=" + v.getUserData().toString();
                         openView(new ExplorerView(url));
@@ -111,8 +110,8 @@ public class BugListView extends View{
             }
          });
 
-         id.setStyle("-fx-size:40px;-fx-background-color:#FFFFFF;-fx-border-width:0 0 1 1;" +
-            "-fx-border-color:#CCCCCC");
+//         id.setStyle("-fx-size:40px;-fx-background-color:#FFFFFF;-fx-border-width:0 0 1 1;" +
+//            "-fx-border-color:#CCCCCC");
          view.getColumns().add(id);
       }
    }

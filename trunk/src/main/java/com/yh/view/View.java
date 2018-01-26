@@ -22,6 +22,13 @@ public abstract class View extends Application {
    public static final int INIT_CONTENT_HEIGHT = 600;
    public static final int SCROLL_BAR_WIDTH = 15;
 
+   private Stage primaryStage;
+   private AnchorPane root;
+   private List<View> views;
+   private Log log = LogFactory.getLog(View.class);
+   private View parentView;
+   private View rootView;
+
    public void open() {
       try {
          start(new Stage());
@@ -95,6 +102,7 @@ public abstract class View extends Application {
       try {
          openView0(v, newWindow);
          views.add(v);
+         v.setParentView(this);
       }
       catch(Exception e) {
          log.error(e);
@@ -115,6 +123,10 @@ public abstract class View extends Application {
          }
       }
       else {
+         if(parentView != null) {
+            parentView.views.remove(this);
+         }
+
          primaryStage.close();
       }
 
@@ -135,10 +147,6 @@ public abstract class View extends Application {
 
    public boolean modal() {
       return false;
-   }
-
-   private final Stage getPrimaryStage() {
-      return primaryStage;
    }
 
    public final AnchorPane getRoot() {
@@ -228,8 +236,11 @@ public abstract class View extends Application {
       v.start(stage);
    }
 
-   private Stage primaryStage;
-   private AnchorPane root;
-   private List<View> views;
-   private Log log = LogFactory.getLog(View.class);
+   private void setParentView(View parentView) {
+      this.parentView = parentView;
+   }
+
+   private void setRootView(View rootView) {
+      this.rootView = rootView;
+   }
 }

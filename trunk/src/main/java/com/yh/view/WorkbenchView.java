@@ -11,6 +11,8 @@ import javafx.scene.layout.GridPane;
 
 public class WorkbenchView extends View{
 
+   private GridPane quickBtnPane;
+
    @Override
    public void start0(AnchorPane root) throws Exception {
       Style.setStyle(root, "-fx-background-color:#FFFFFF;");
@@ -67,6 +69,4 @@ public class WorkbenchView extends View{
       quickBtnPane.add(bugBtn, 1, 0);
 
    }
-
-   private GridPane quickBtnPane;
 }
