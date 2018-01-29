@@ -9,6 +9,8 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.GridPane;
 
+import java.util.Properties;
+
 public class WorkbenchView extends View{
 
    private GridPane quickBtnPane;
@@ -48,25 +50,28 @@ public class WorkbenchView extends View{
    }
 
    private void addQuickBtn() {
-      ImageButton shareBtn = new ImageButton("文件共享", Resource.getImagePath("share.png"));
+      ImageButton shareBtn = new ImageButton("文件共享", Resource.getImagePath("share.png"),
+         100, 100);
 
+      final Properties prop = Resource.loadShareFileProperties();
       shareBtn.setOnAction(new EventHandler<MouseEvent>() {
          public void handle(MouseEvent event) {
-            openView(new ShareFileView("192.168.1.134", "root", "forDEV123"), true);
+            openView(new ShareFileView(prop.getProperty("host"), prop.getProperty("username"),
+               prop.getProperty("password")), true);
          }
       });
 
       quickBtnPane.add(shareBtn, 0, 0);
 
-      ImageButton bugBtn = new ImageButton("BUG系统", Resource.getImagePath("bug.png"));
+      ImageButton bugBtn = new ImageButton("BUG系统", Resource.getImagePath("bug.png"),
+         100, 100);
 
       bugBtn.setOnAction(new EventHandler<MouseEvent>() {
          public void handle(MouseEvent event) {
-            openView(new BugListView());
+            openView(new BugListView(), true);
          }
       });
 
       quickBtnPane.add(bugBtn, 1, 0);
-
    }
 }
