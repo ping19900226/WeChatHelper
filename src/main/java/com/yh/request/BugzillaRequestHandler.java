@@ -90,15 +90,6 @@ public class BugzillaRequestHandler extends RequestHandler{
                      for(Element td : tds) {
                         bcs.add(td.text());
                      }
-//                     Bug bug = new Bug();
-//                     bug.setId(Integer.parseInt(tds.get(0).text()));
-//                     bug.setType(tds.get(1).text());
-//                     bug.setPriority(tds.get(2).text());
-//                     bug.setReporter(tds.get(3).text());
-//                     bug.setStatus(tds.get(5).text());
-//                     bug.setSummary(tds.get(7).text());
-//
-//                     bugs.add(bug);
                   }
 
                }
