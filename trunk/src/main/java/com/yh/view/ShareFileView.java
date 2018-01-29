@@ -248,14 +248,17 @@ public class ShareFileView extends View{
    }
 
    private void addQuickBar() {
-      ImageButton view = new ImageButton(Resource.getImagePath("back_b_1.png"), 30,30);
+      ImageButton view = new ImageButton(Resource.getImagePath("back.png"), 30,30);
       quickBtnPane.getChildren().add(view);
 
       view.setOnMouseClicked(new EventHandler<MouseEvent>() {
          public void handle(MouseEvent event) {
             if(event.getClickCount() == 1 && event.getButton() == MouseButton.PRIMARY) {
-               contentPane.getChildren().clear();
-               list(history.pop(), true);
+               if(history.size() > 0) {
+                  contentPane.getChildren().clear();
+                  list(history.pop(), true);
+               }
+
             }
          }
       });
