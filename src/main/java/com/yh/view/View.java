@@ -180,6 +180,7 @@ public abstract class View extends Application {
    public File showChooseDirDialog(String title) {
       DirectoryChooser dc = new DirectoryChooser();
       dc.setTitle(title == null ? "选择目录" : title);
+      dc.setInitialDirectory(new File(Resource.downloadPath()));
       File dir = dc.showDialog(primaryStage);
       return dir;
    }

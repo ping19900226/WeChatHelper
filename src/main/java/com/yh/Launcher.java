@@ -1,10 +1,12 @@
 package com.yh;
 
 import com.yh.request.*;
+import com.yh.util.Resource;
 import com.yh.view.WorkbenchView;
 import javafx.application.Application;
 import javafx.stage.Stage;
 
+import java.io.File;
 import java.net.CookieHandler;
 import java.net.URLConnection;
 
@@ -14,10 +16,25 @@ public class Launcher extends Application {
       System.setProperty ("jsse.enableSNIExtension", "false");
       URLConnection.setContentHandlerFactory(new YHContentHandlerFactory());
       CookieHandler.setDefault(RequestHelper.getCookieHander());
+      checkAndCreateFolder();
       RequestHandler.regist(new BugzillaRequestHandler());
       RequestHandler.regist(new ReviewBoardRequestHandler());
       RequestHandler.regist(new WeChatRequestHandler());
       new WorkbenchView().start(new Stage());
+   }
+
+   private void checkAndCreateFolder() {
+      File confDir = new File(Resource.documentPath().concat(File.separator).concat("conf"));
+
+      if(!confDir.exists()) {
+         confDir.mkdirs();
+      }
+
+      File downloadDir = new File(Resource.downloadPath());
+
+      if(!downloadDir.exists()) {
+         downloadDir.mkdirs();
+      }
    }
 
    public static void main(String[] args) {

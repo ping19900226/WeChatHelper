@@ -147,7 +147,7 @@ public class ExplorerView extends View{
             connection.getHeaderField("Content-disposition");
             contentLength = connection.getContentLength();
 
-            if(ft.equalsIgnoreCase("application/octet-stream")) {
+            if(ft.toLowerCase().startsWith("application/")) {
                canDownload = true;
                stream = connection.getInputStream();
             }

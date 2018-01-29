@@ -2,6 +2,7 @@ package com.yh.view;
 
 import com.yh.request.*;
 import com.yh.request.entity.DataGrid;
+import com.yh.util.Resource;
 import com.yh.view.factory.ArrayValueFactory;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
@@ -16,13 +17,21 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.util.Callback;
 
-import java.util.List;;
+import java.util.List;
+import java.util.Properties;;
 
 public class BugListView extends View{
+   private TableView view;
+   private BugzillaRequestHandler handler;
+   private View self;
+   private int crIdx;
+   private Properties prop;
+
    public void start0(AnchorPane root) throws Exception {
       self = this;
       handler = (BugzillaRequestHandler) RequestHandler.getRequestHandler(1);
       RequestHandler.AuthenticationInfo info = handler.getDefaultAuthenticationInfo();
+      prop = Resource.loadBugListProperties();
 
       if(info == null || !info.isLogin()) {
          handler.login("yihuanwang@yonghongtech.com", "yihuan");
@@ -126,9 +135,4 @@ public class BugListView extends View{
 
       view.setItems(data);
    }
-
-   private TableView view;
-   private BugzillaRequestHandler handler;
-   private View self;
-   private int crIdx;
 }
