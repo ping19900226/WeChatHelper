@@ -2,6 +2,7 @@ package com.yh.view;
 
 import com.yh.core.DownloadListener;
 import com.yh.core.YHFileUtil;
+import com.yh.db.JSDBHandler;
 import javafx.beans.value.*;
 import javafx.concurrent.Worker;
 import javafx.scene.control.Alert;
@@ -9,6 +10,7 @@ import javafx.scene.layout.AnchorPane;
 import javafx.scene.web.*;
 import javafx.stage.Stage;
 import javafx.util.Callback;
+import netscape.javascript.JSObject;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import java.io.*;
@@ -17,6 +19,11 @@ import java.nio.charset.Charset;
 import java.util.Map;
 
 public class ExplorerView extends View{
+   private static final Log log = LogFactory.getLog(ExplorerView.class);
+   private String url;
+   private WebView view;
+   private WebEngine engine;
+   private View self;
 
    public ExplorerView() {
 
@@ -27,7 +34,7 @@ public class ExplorerView extends View{
    }
 
    public void start0(AnchorPane root) throws Exception {
-
+      self = this;
       view = new WebView();
       engine = view.getEngine();
       engine.load(url);
@@ -66,6 +73,10 @@ public class ExplorerView extends View{
          public void changed(ObservableValue<? extends Worker.State> observable, Worker.State oldValue, Worker.State newValue) {
             if(newValue == Worker.State.SUCCEEDED) {
                setTitle(view.getEngine().getTitle());
+               JSObject win = (JSObject) engine.executeScript("window");
+               win.setMember("derby", new JSDBHandler());
+               //win.setMember("system", new Console());
+               //win.setMember("app", self);
             }
             else if (newValue == Worker.State.CANCELLED) {
                //may be it is not a html, to download
@@ -168,9 +179,4 @@ public class ExplorerView extends View{
       private String filename;
       private int contentLength;
    }
-
-   private static final Log log = LogFactory.getLog(ExplorerView.class);
-   private String url;
-   private WebView view;
-   private WebEngine engine;;
 }

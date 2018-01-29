@@ -31,6 +31,11 @@ public class Resource {
       return System.getProperty("user.home") + File.separator + "YH Data";
    }
 
+   public static String databasePath() {
+      return documentPath().concat(File.separator).concat("derby").concat(File.separator)
+         .concat("db;create=true");
+   }
+
    public static Properties loadBugListProperties() {
       String filePath = documentPath().concat(File.separator)
          .concat("conf").concat(File.separator).concat("bug_list.properties");
