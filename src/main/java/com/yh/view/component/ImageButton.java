@@ -29,8 +29,8 @@ public class ImageButton extends VBox {
 
    private void build(String text, String icon, int width, int height) {
       ImageView image = new ImageView(new Image(icon));
-      image.setFitWidth(width - 10);
-      image.setFitHeight(height - 10);
+      image.setFitWidth(width - 15);
+      image.setFitHeight(height - 15);
       //VBox.setMargin(image, new Insets(10));
       this.getChildren().add(image);
 
@@ -50,7 +50,7 @@ public class ImageButton extends VBox {
       this.setPrefHeight(text == null ? height : height + 30);
       this.setAlignment(Pos.CENTER);
       this.setCursor(Cursor.HAND);
-      this.setPadding(new Insets(10));
+      this.setPadding(new Insets(5));
 
       Style style = Style.parse(this.getStyle());
       style.setStyle("-fx-border-width: 1px");
