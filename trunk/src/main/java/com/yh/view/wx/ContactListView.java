@@ -27,6 +27,12 @@ import java.io.File;
 import java.util.*;
 
 public class ContactListView extends View {
+   private WeChatRequestHandler handler = (WeChatRequestHandler) RequestHandler.getRequestHandler(3);
+   private AuthInfo info;
+   private Contact selectUser;
+   private Map<String, Label> labels;
+   private Map<String, String> maps;
+
     @Override
     public void start0(AnchorPane root) throws Exception {
         root.setPadding(new Insets(10));
@@ -69,6 +75,11 @@ public class ContactListView extends View {
         count.prefWidthProperty().bind(inputArea.prefWidthProperty());
         count.setLabelWidthP(80);
         inputArea.getChildren().add(count);
+
+       final LabelInput time = new LabelInput("时间间隔");
+       time.prefWidthProperty().bind(inputArea.prefWidthProperty());
+       time.setLabelWidthP(80);
+       inputArea.getChildren().add(time);
 
         HBox buttonPane = new HBox();
 
@@ -127,6 +138,7 @@ public class ContactListView extends View {
             public void handle(ActionEvent event) {
                 try {
                     int c = Integer.parseInt(count.getText());
+                    int t = Integer.parseInt(time.getText());
 
                     for(int i = 0; i < c; i ++) {
                         boolean res = handler.sendMesg(area.getText(), selectUser.getUserName());
@@ -135,7 +147,7 @@ public class ContactListView extends View {
                         }
                         rsArea.appendText(area.getText());
 
-                        Thread.sleep(c > 10 ? c * 100 : 0);
+                        Thread.sleep(t > 1 ? t * 1000 : c > 10 ? c * 100 : 0);
                     }
                     area.clear();
 
@@ -191,10 +203,4 @@ public class ContactListView extends View {
             }
         }
     }
-
-    private WeChatRequestHandler handler = (WeChatRequestHandler) RequestHandler.getRequestHandler(3);
-    private AuthInfo info;
-    private Contact selectUser;
-    private Map<String, Label> labels;
-    private Map<String, String> maps;
 }
