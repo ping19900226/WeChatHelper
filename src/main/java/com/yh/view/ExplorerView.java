@@ -115,6 +115,11 @@ public class ExplorerView extends View{
    }
 
    class Download {
+      private String url;
+      private boolean canDownload;
+      private InputStream stream;
+      private String filename;
+      private int contentLength;
 
       public Download(String url) {
          this.url = url;
@@ -172,11 +177,5 @@ public class ExplorerView extends View{
             canDownload = false;
          }
       }
-
-      private String url;
-      private boolean canDownload;
-      private InputStream stream;
-      private String filename;
-      private int contentLength;
    }
 }
