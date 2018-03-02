@@ -30,6 +30,8 @@ public class Launcher extends Application {
          confDir.mkdirs();
       }
 
+      String infoFile = confDir.getAbsolutePath() + File.separator + "default.info";
+
       File downloadDir = new File(Resource.downloadPath());
 
       if(!downloadDir.exists()) {

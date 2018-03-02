@@ -1,4 +1,5 @@
-.table-view {-fx-fixed-cell-size:40px;-fx-background-color:#FFFFFF;-fx-border-width:0 0 1 1;-fx-border-color:#CCCCCC}
-.table-row-cell:filled:selected{-fx-background-color:#CCCCCC;-fx-border-color:#CCCCCC}
+.table-view {-fx-fixed-cell-size:40px;-fx-background-color:#FFFFFF;}
+.table-row-cell:filled:selected{-fx-background-color:#CCCCCC;-fx-border-color:#CCCCCC;}
+.table-row-cell{}
 .column-header{-fx-size:40px;-fx-background-color:#FFFFFF;-fx-border-width:1 0 1 0;-fx-border-color:#CCCCCC}
 .table-cell{-fx-text-alignment:center;}

@@ -79,4 +79,50 @@ public class Resource {
 
       return prop;
    }
+
+   public static Properties loadInfoProperties() {
+      String filePath = documentPath().concat(File.separator)
+         .concat("conf").concat(File.separator).concat("default.info");
+
+      File file = new File(filePath);
+
+      Properties prop = new Properties();
+      try {
+
+         if(!file.exists()) {
+            file.createNewFile();
+         }
+
+         prop.load(new FileInputStream(file));
+      }
+      catch(IOException e) {
+
+      }
+
+      return prop;
+   }
+
+   public static Properties writeInfoProperties(String key, String value) {
+      String filePath = documentPath().concat(File.separator)
+         .concat("conf").concat(File.separator).concat("default.info");
+
+      File file = new File(filePath);
+
+      Properties prop = new Properties();
+      try {
+
+         if(!file.exists()) {
+            file.createNewFile();
+         }
+
+         prop.load(new FileInputStream(file));
+         prop.setProperty(key, value);
+         prop.store(new FileOutputStream(file), "default info");
+      }
+      catch(IOException e) {
+
+      }
+
+      return prop;
+   }
 }

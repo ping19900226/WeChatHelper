@@ -236,7 +236,7 @@ public class ShareFileView extends View{
 
    private void download(YHFile file) {
       File dir = showChooseDirDialog("选择保存的目录");
-
+      boolean c = downloadCheck(dir.getAbsolutePath(), file.getName());
       boolean b = YHFileUtil.downloadShareFile(dir.getAbsolutePath(), file, conn);
 
       if(b) {

@@ -178,10 +178,13 @@ public abstract class View extends Application {
    }
 
    public File showChooseDirDialog(String title) {
+      String initDirectory = Resource.loadInfoProperties().getProperty("download.path");
+      initDirectory = initDirectory == null ? Resource.downloadPath() : initDirectory;
       DirectoryChooser dc = new DirectoryChooser();
       dc.setTitle(title == null ? "选择目录" : title);
-      dc.setInitialDirectory(new File(Resource.downloadPath()));
+      dc.setInitialDirectory(new File(initDirectory));
       File dir = dc.showDialog(primaryStage);
+      Resource.writeInfoProperties("download.path", dir.getAbsolutePath());
       return dir;
    }
 
@@ -226,6 +229,21 @@ public abstract class View extends Application {
    }
 
    public abstract void start0(AnchorPane root) throws Exception;
+
+   public boolean downloadCheck(String path, String fileName) {
+      File file = new File(path);
+
+      if(file.exists()) {
+         File[] fs = file.listFiles();
+         for(File f : fs) {
+            if(f.getName().equals(fileName)) {
+               return true;
+            }
+         }
+      }
+
+      return false;
+   }
 
    private void openView0(View v, boolean newWindow) throws Exception {
       Stage stage = new Stage();
