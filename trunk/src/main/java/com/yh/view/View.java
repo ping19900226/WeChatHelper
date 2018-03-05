@@ -1,12 +1,13 @@
 package com.yh.view;
 
+import com.yh.request.Callback;
 import com.yh.util.Resource;
+import com.yh.view.dialog.Alert;
 import javafx.application.Application;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.event.EventHandler;
 import javafx.scene.Scene;
-import javafx.scene.control.Alert;
 import javafx.scene.image.Image;
 import javafx.scene.layout.AnchorPane;
 import javafx.stage.*;
@@ -35,7 +36,7 @@ public abstract class View extends Application {
       }
       catch(Exception e) {
          log.error(e);
-         new Alert(Alert.AlertType.ERROR, "窗口打开失败").show();
+         alert("窗口打开失败");
       }
    }
 
@@ -45,7 +46,7 @@ public abstract class View extends Application {
       }
       catch(Exception e) {
          log.error(e);
-         new Alert(Alert.AlertType.ERROR, "窗口打开失败").show();
+         alert("窗口打开失败");
       }
    }
 
@@ -107,7 +108,7 @@ public abstract class View extends Application {
       catch(Exception e) {
          log.error(e);
          e.printStackTrace();
-         new Alert(Alert.AlertType.ERROR, "窗口打开失败").show();
+         new Alert("窗口打开失败").show();
       }
    }
 
@@ -189,15 +190,21 @@ public abstract class View extends Application {
    }
 
    public File showOpenFileDialog(String title) {
+      String initDirectory = Resource.loadInfoProperties().getProperty("download.path");
+      initDirectory = initDirectory == null ? Resource.downloadPath() : initDirectory;
       FileChooser fc = new FileChooser();
       fc.setTitle(title == null ? "打开文件" : title);
+      fc.setInitialDirectory(new File(initDirectory));
       File dir = fc.showOpenDialog(primaryStage);
       return dir;
    }
 
    public File showSaveFileDialog(String title) {
+      String initDirectory = Resource.loadInfoProperties().getProperty("download.path");
+      initDirectory = initDirectory == null ? Resource.downloadPath() : initDirectory;
       FileChooser fc = new FileChooser();
       fc.setTitle(title == null ? "保存文件" : title);
+      fc.setInitialDirectory(new File(initDirectory));
       File dir = fc.showSaveDialog(primaryStage);
       return dir;
    }
@@ -243,6 +250,22 @@ public abstract class View extends Application {
       }
 
       return false;
+   }
+
+   public void alert(String content) {
+      alert(null, content, null);
+   }
+
+   public void alert(String title, String content, Callback<Byte> callback) {
+      openView(new Alert(title, content, callback));
+   }
+
+   public void confirm(String content, Callback<Byte> callback) {
+      alert(null, content, callback);
+   }
+
+   public void confirm(String title, String content, Callback<Byte> callback) {
+      openView(new Alert(title, content, callback));
    }
 
    private void openView0(View v, boolean newWindow) throws Exception {

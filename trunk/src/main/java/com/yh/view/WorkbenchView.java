@@ -27,6 +27,8 @@ public class WorkbenchView extends View{
       root.getChildren().add(quickBtnPane);
 
       addQuickBtn();
+
+      alert("测试弹窗");
    }
 
    @Override
