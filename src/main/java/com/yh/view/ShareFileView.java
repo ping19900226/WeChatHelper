@@ -201,7 +201,7 @@ public class ShareFileView extends View{
       }
       catch(IOException e) {
          //addBack(file);
-         new Alert(Alert.AlertType.ERROR, e.getMessage()).show();
+         alert(e.getMessage());
       }
 
       tipLabel.setText("完毕\t总数：" + (dc + fc) + "\t文件：" + fc + "\t目录：" + dc);
@@ -240,10 +240,10 @@ public class ShareFileView extends View{
       boolean b = YHFileUtil.downloadShareFile(dir.getAbsolutePath(), file, conn);
 
       if(b) {
-         new Alert(Alert.AlertType.INFORMATION,"下载完成").show();
+         alert("下载完成");
       }
       else {
-         new Alert(Alert.AlertType.ERROR,"下载失败").show();
+         alert("下载失败");
       }
    }
 
