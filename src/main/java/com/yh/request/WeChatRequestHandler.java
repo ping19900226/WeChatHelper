@@ -536,6 +536,12 @@ System.out.println(n);
             }
 
             response = buffer.toString();
+
+            JSONObject resp = JSON.parseObject(response);
+
+            if(resp.getJSONObject("BaseResponse").getIntValue("Ret") == 0) {
+               return resp.getString("MediaId");
+            }
         }
         catch (IOException e) {
             e.printStackTrace();
@@ -552,29 +558,39 @@ System.out.println(n);
         String mediaId = upload(file, toUserName);
         AuthInfo info = (AuthInfo) getDefaultAuthenticationInfo().getLoginInfo();
         JSONObject object = new JSONObject();
-        object.put("UploadType", 2);
         JSONObject baseRequest = buildBaseRequest(info);
         object.put("BaseRequest", baseRequest);
 
         JSONObject msg = new JSONObject();
         long id = System.currentTimeMillis();
         msg.put("ClientMsgId", "" + id);
-        msg.put("LocalID", "" + id);
         msg.put("Content", "");
         msg.put("FromUserName",info.getUserName());
+        msg.put("LocalID", "" + id);
         msg.put("MediaId", mediaId);
         msg.put("ToUserName", toUserName);
         msg.put("Type", 3);
 
-        object.put("Msg", System.currentTimeMillis());
+        object.put("Msg", msg);
         object.put("Scene", 0);
-        String rs = postContent("https://wx.qq.com/cgi-bin/mmwebwx-bin/webwxsendmsgimg?fun=async&f=json&lang=zh_CN&pass_ticket=" + info.getPass_ticket(), "");
+        String rs = postContent("https://wx.qq" +
+           ".com/cgi-bin/mmwebwx-bin/webwxsendmsgimg?fun=async&f=json&lang=zh_CN&pass_ticket=" +
+           info.getPass_ticket(), object.toJSONString());
         JSONObject resp = JSON.parseObject(rs);
 
         if(resp.getJSONObject("BaseResponse").getIntValue("Ret") == 0) {
-            return resp.getString("MsgID") + "##" + mediaId;
+            return mediaId + "##" + resp.getString("MsgID");
         }
-        return null;
+
+        return mediaId;
+    }
+
+    public void getHistoryMessage() throws Exception {
+       get("https://mp.weixin.qq.com/mp/profile_ext?action=home&__biz=MjM5MjU0NTc4OQ==&scene=124&devicetype=android-24&version=26060533&lang=zh_CN&nettype=WIFI&a8scene=3&pass_ticket=gFL9EgnKicKZUAo%2BH9eLjxpPD57kfgy5g6qHgr%2Fgx3%2Fncd9PTFJWupnx%2Fvu%2BcgJH&wx_header=1", new ResponseHandler() {
+          public void handle(Response response) throws Exception {
+             System.out.println(response.getStringContent());
+          }
+       });
     }
 
     private JSONObject buildBaseRequest(AuthInfo info) {
