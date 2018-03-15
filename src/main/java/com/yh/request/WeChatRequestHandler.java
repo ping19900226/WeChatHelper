@@ -539,9 +539,10 @@ System.out.println(n);
 
             JSONObject resp = JSON.parseObject(response);
 
-            if(resp.getJSONObject("BaseResponse").getIntValue("Ret") == 0) {
-               return resp.getString("MediaId");
-            }
+//            if(resp.getJSONObject("BaseResponse").getIntValue("Ret") == 0) {
+//               return resp.getString("MediaId");
+//            }
+           return resp.getString("MediaId");
         }
         catch (IOException e) {
             e.printStackTrace();
