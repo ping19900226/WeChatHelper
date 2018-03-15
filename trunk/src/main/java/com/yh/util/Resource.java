@@ -6,7 +6,8 @@ import java.util.Properties;
 public class Resource {
 
    public static InputStream loadImage(String name) {
-      return Resource.class.getClassLoader().getResourceAsStream("images" + File.separator + name);
+      return Resource.class.getClassLoader().getResourceAsStream("images" + File.separator +
+         name);
    }
 
    public static String getImagePath(String name) {

@@ -37,6 +37,7 @@ public class ContactListView extends View {
     public void start0(AnchorPane root) throws Exception {
         root.setPadding(new Insets(10));
         info = (AuthInfo) handler.getDefaultAuthenticationInfo().getLoginInfo();
+        handler.getHistoryMessage();
 
         HBox box = new HBox();
         box.prefHeightProperty().bind(root.prefHeightProperty());
@@ -162,13 +163,21 @@ public class ContactListView extends View {
             public void handle(ActionEvent event) {
                 try {
                     File file = showOpenFileDialog("选择一张图片");
-                    String rs = handler.sendImage(file, selectUser.getUserName());
-                    if(rs != null) {
-                        rsArea.appendText("图片发送成功\n\t" + rs);
-                        return;
-                    }
+                    int c = Integer.parseInt(count.getText());
+                    int t = Integer.parseInt(time.getText());
 
-                    rsArea.appendText("-------信息发送失败");
+                    for(int i = 0; i < c; i ++) {
+                       rsArea.appendText(area.getText());
+                       String rs = handler.sendImage(file, selectUser.getUserName());
+
+                       if(rs != null) {
+                          rsArea.appendText("图片发送成功\n\t" + rs);
+                       } else {
+                          rsArea.appendText("-------信息发送失败");
+                       }
+
+                       Thread.sleep(t > 1 ? t * 1000 : c > 10 ? c * 100 : 0);
+                    }
                 } catch (Exception e) {
                     rsArea.appendText("-------信息发送失败");
                 }
