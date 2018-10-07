@@ -11,9 +11,10 @@ import com.yh.request.entity.wx.Message;
 import com.yh.util.JSONUtil;
 import com.yh.util.RandomUtil;
 import com.yh.util.XMLUtil;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.apache.http.HttpEntity;
 import org.apache.http.entity.mime.MultipartEntityBuilder;
-
 import javax.net.ssl.HttpsURLConnection;
 import java.io.*;
 import java.math.BigInteger;
@@ -26,7 +27,11 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+/**
+ * Handle the we chat request.
+ */
 public class WeChatRequestHandler extends RequestHandler {
+    private static final Log log = LogFactory.getLog(WeChatRequestHandler.class);
 
     public WeChatRequestHandler() {
         setDefaultAuthenticationInfo(new WeChatAuthenticationInfo());
@@ -37,21 +42,25 @@ public class WeChatRequestHandler extends RequestHandler {
     }
 
     public void getMain() throws Exception {
+        log.info("Get Main Page.");
         get("https://wx.qq.com", null);
     }
 
     public String jsLogin(String appid){
+        log.info("Get js login info.");
         String rs = getContent("https://login.wx.qq.com/jslogin?appid=" + appid
                 + "&redirect_uri=https%3A%2F%2Fwx.qq.com%2Fcgi-bin%2Fmmwebwx-bin%2Fwebwxnewloginpage&fun=new&lang=zh_CN&_="
                 + System.currentTimeMillis());
 
         rs = rs.substring(rs.indexOf("\"")  + 1);
         rs = rs.substring(0, rs.indexOf("\""));
+        log.info("The js login info is: " + rs);
         return rs;
     }
 
     public String login(String uuid) throws Exception {
         final FinalData<String> data = new FinalData<String>();
+        log.info("Login with uuid: " + uuid);
 
         get("https://login.wx.qq.com/cgi-bin/mmwebwx-bin/login?loginicon=true&uuid=" + uuid + "&tip=0&r=" +
                 RandomUtil.getNumber(10) + "&_=" + System.currentTimeMillis(), new ResponseHandler() {
@@ -67,6 +76,8 @@ public class WeChatRequestHandler extends RequestHandler {
                         rs = rs + "&fun=new&version=v2";
                         data.setValue(rs);
                     }
+
+                    log.info("Login with uuid complete, result: [code=" + code + ", result=" + data.getValue());
                 }
             }
         });
@@ -75,14 +86,17 @@ public class WeChatRequestHandler extends RequestHandler {
     }
 
     public String loadJs() throws Exception {
+        log.info("Load js for appid.");
         String js = getContent("https://res.wx.qq.com/a/wx_fed/webwx/res/static/js/index_e01fd8a.js");
         js = js.substring(js.indexOf("API_jsLogin:") + "API_jsLogin:".length());
         js = js.substring(js.indexOf("?appid=") + "?appid=".length(), js.indexOf("&"));
+        log.info("Get appid, " + js);
         return js;
     }
 
     public void getQrcode(String uuid, final Callback<InputStream> callback) {
         try {
+            log.info("Get qrcode with uuid:" + uuid);
             get("https://login.weixin.qq.com/qrcode/" + uuid, new ResponseHandler() {
                 @Override
                 public void handle(Response response) throws Exception {
@@ -90,19 +104,19 @@ public class WeChatRequestHandler extends RequestHandler {
                 }
             });
         } catch (Exception e) {
-            e.printStackTrace();
+            log.error("Get qrcode error: " + e.getMessage());
         }
     }
 
     public String getDeviceId() {
         String n =  RandomUtil.getFixedNumber(15);
-System.out.println(n);
         return "e" + ("" + n).substring(2, 17);
     }
 
     public void newLoginPage(String url) throws Exception {
+        log.info("To new login page." + url);
         String xml = getContent(url);
-        System.out.println(xml);
+        log.info(xml);
         Error info = XMLUtil.xmlToObject(xml, Error.class);
 
         info.setDeceiveId(getDeviceId());
@@ -112,8 +126,9 @@ System.out.println(n);
 
     public List<Contact> getContactList() {
         AuthInfo info = (AuthInfo) getDefaultAuthenticationInfo().getLoginInfo();
+        log.info("Get contact list with auth info:" + info);
         String content = getContent("https://wx.qq.com/cgi-bin/mmwebwx-bin/webwxgetcontact?r=1" +  + System.currentTimeMillis() + "&seq=0&skey=" + info.getSkey());
-
+        log.info("__________________Contact list : " + content);
         List<Contact> data = new ArrayList<Contact>();
         JSONObject resp = JSON.parseObject(content);
         if(resp.getJSONObject("BaseResponse").getIntValue("Ret") == 0) {
@@ -123,17 +138,28 @@ System.out.println(n);
             for (int i = 0; i < contactList.size(); i++) {
                 JSONObject contact = contactList.getJSONObject(i);
                 Contact cnc = new Contact();
-                data.add(cnc);
-                cnc.setUserName(contact.getString("UserName"));
-                cnc.setNickName(contact.getString("NickName"));
-                cnc.setHeadImgUrl("https://wx.qq.com" + contact.getString("HeadImgUrl"));
-                cnc.setContactFlag(contact.getIntValue("ContactFlag"));
-                cnc.setpYQuanPin(contact.getString("PYQuanPin"));
-                cnc.setpYInitial(contact.getString("PYInitial"));
-                cnc.setRemarkName(contact.getString("RemarkName"));
-                cnc.setMenberCount(contact.getInteger("MemberCount"));
-                cnc.setSex(contact.getIntValue("Sex"));
+                data.add(toContact(contact));
+
+                if(cnc.getContactFlag() == 0) {
+                    Integer memberCount = cnc.getMemberCount();
+
+                    if(memberCount == null || memberCount <= 0) {
+                        continue;
+                    }
+
+                    cnc.setMemberCount(memberCount);
+                    JSONArray memberArray = contact.getJSONArray("MemberList");
+                    List<Contact> memberList = new ArrayList<Contact>(memberCount);
+                    cnc.setMemberList(memberList);
+
+                    for(int j = 0; j < memberArray.size(); j++) {
+                        JSONObject memberObj = memberArray.getJSONObject(j);
+                        memberList.add(toContact(memberObj));
+                    }
+                }
             }
+
+            log.info("__________________Contact list : " + contactList.toString());
         }
 
         return data;
@@ -141,20 +167,21 @@ System.out.println(n);
 
     public List<Contact> getContactInitList() throws Exception {
         final AuthInfo info = (AuthInfo) getDefaultAuthenticationInfo().getLoginInfo();
-        final List<Contact> data = new ArrayList<Contact>();
+        final List<Contact> resultContactList = new ArrayList<Contact>();
         JSONObject message = new JSONObject();
         JSONObject baseRequest = new JSONObject();
         baseRequest.put("Uin", info.getWxuin());
         baseRequest.put("Sid", info.getWxsid());
         baseRequest.put("Skey", info.getSkey());
-
         message.put("BaseRequest", baseRequest);
+        log.info("Get init  contact list with auth info:" + message.toString());
 
         post("https://wx.qq.com/cgi-bin/mmwebwx-bin/webwxinit?r=1182666740&lang=zh_CN&pass_ticket=" +
                 info.getPass_ticket(), message.toJSONString(), new ResponseHandler() {
             @Override
             public void handle(Response response) throws Exception {
                 String text = response.getStringContent();
+                log.info("Get init contact list: " + text);
                 JSONObject resp = JSON.parseObject(text);
 
                 if(resp.getJSONObject("BaseResponse").getIntValue("Ret") == 0) {
@@ -165,42 +192,90 @@ System.out.println(n);
                     info.setUserName(user.getString("UserName"));
                     info.setNickName(user.getString("NickName"));
 
-                    for (int i = 0; i < contactList.size(); i++) {
+                    for(int i = 0; i < contactList.size(); i++) {
                         JSONObject contact = contactList.getJSONObject(i);
-                        Contact cnc = new Contact();
-                        data.add(cnc);
-                        cnc.setUserName(contact.getString("UserName"));
-                        cnc.setNickName(contact.getString("NickName"));
-                        cnc.setHeadImgUrl("https://wx.qq.com" + contact.getString("HeadImgUrl"));
-                        cnc.setContactFlag(contact.getIntValue("ContactFlag"));
-                        cnc.setpYQuanPin(contact.getString("PYQuanPin"));
-                        cnc.setpYInitial(contact.getString("PYInitial"));
-                        cnc.setRemarkName(contact.getString("RemarkName"));
-                        cnc.setMenberCount(contact.getInteger("MemberCount"));
-                        cnc.setSex(contact.getIntValue("Sex"));
-                    }
+                        Contact cnc = toContact(contact);
 
-                    JSONObject synckey = resp.getJSONObject("SyncKey");
-                    StringBuilder synckeyStr = new StringBuilder();
-                    if (synckey.getIntValue("Count") > 0) {
-                        JSONArray list = synckey.getJSONArray("List");
+                        if(cnc.getContactFlag() == 0) {
+                            Integer memberCount = cnc.getMemberCount();
 
-                        for (int i = 0; i < list.size(); i++) {
-                            JSONObject keyVal = list.getJSONObject(i);
-                            if (synckeyStr.length() > 0) {
-                                synckeyStr.append("|");
+                            if(memberCount == null || memberCount <= 0) {
+                                continue;
                             }
-                            synckeyStr.append(keyVal.getIntValue("Key")).append("_").append(keyVal.getIntValue("Val"));
+
+                            cnc.setMemberCount(memberCount);
+                            JSONArray memberArray = contact.getJSONArray("MemberList");
+                            List<Contact> memberList = new ArrayList<Contact>(memberCount);
+                            cnc.setMemberList(memberList);
+
+                            for(int j = 0; j < memberArray.size(); j++) {
+                                JSONObject memberObj = memberArray.getJSONObject(j);
+                                memberList.add(toContact(memberObj));
+                            }
                         }
 
+                        resultContactList.add(cnc);
                     }
 
-                    info.setSyncKey(synckeyStr.toString());
+                    info.setSyncKey(getSyncKey(resp.getJSONObject("SyncKey")));
                 }
             }
         });
 
-        return data;
+        return resultContactList;
+    }
+
+    /**
+     * Batch get contact info by contact username list.
+     * @param chatRoomId
+     * @param searchContactList
+     * @return
+     * @throws Exception
+     */
+    public List<Contact> batchGetContact(String chatRoomId, List<Contact> searchContactList) throws Exception {
+        final List<Contact> resultContactList = new ArrayList<Contact>();
+        AuthInfo info = (AuthInfo) getDefaultAuthenticationInfo().getLoginInfo();
+        JSONObject message = new JSONObject();
+
+        message.put("BaseRequest", buildBaseRequest(info));
+        message.put("Count", searchContactList.size());
+
+        JSONArray list = new JSONArray();
+
+        for(Contact c : searchContactList) {
+            JSONObject obj = new JSONObject();
+            obj.put("UserName", c.getUserName());
+            obj.put("EncryCharRoomId", chatRoomId);
+            list.add(obj);
+        }
+
+        StringBuilder url = new StringBuilder("https://wx.qq.com/cgi-bin/mmwebwx-bin/webwxbatchgetcontact?type=ex&r=")
+            .append((System.currentTimeMillis()))
+            .append("&pass_ticket=")
+            .append(info.getPass_ticket());
+        log.info("Batch get contact info");
+
+        post(url.toString(), message.toJSONString(), new ResponseHandler() {
+            @Override
+            public void handle(Response response) throws Exception {
+                JSONObject resp = JSON.parseObject(response.getStringContent());
+                int count = resp.getIntValue("Count");
+                log.info("Batch get contact info, count: " + count);
+
+                if(count <= 0) {
+                    return;
+                }
+
+                JSONArray contactList = resp.getJSONArray("ContactList");
+
+                for(int i = 0; i < contactList.size(); i++) {
+                    resultContactList.add(toContact(contactList.getJSONObject(i)));
+                }
+
+            }
+        });
+
+        return resultContactList;
     }
 
     public boolean sendMesg(String content, String toUserName)
@@ -208,11 +283,6 @@ System.out.println(n);
         final FinalData<Boolean> data = new FinalData<Boolean>();
         AuthInfo info = (AuthInfo) getDefaultAuthenticationInfo().getLoginInfo();
         JSONObject message = new JSONObject();
-        JSONObject baseRequest = new JSONObject();
-        baseRequest.put("Uin", info.getWxuin());
-        baseRequest.put("Sid", info.getWxsid());
-        baseRequest.put("Skey", info.getSkey());
-        baseRequest.put("DeviceID", info.getDeceiveId());
 
         String localId = System.currentTimeMillis() +  "" + RandomUtil.getNumber(4);
         JSONObject msg = new JSONObject();
@@ -225,7 +295,7 @@ System.out.println(n);
 
         final Message mesg = JSONUtil.parse(msg.toJSONString(), Message.class);
 
-        message.put("BaseRequest", baseRequest);
+        message.put("BaseRequest", buildBaseRequest(info));
         message.put("Msg", msg);
         message.put("Scene", 0);
 
@@ -255,6 +325,7 @@ System.out.println(n);
         String rs = getContent("https://webpush.wx.qq.com/cgi-bin/mmwebwx-bin/synccheck?" + queryStr);
         rs = rs.replace("window.synccheck=", "");
         JSONObject response = JSON.parseObject(rs);
+
         if(response.getIntValue("retcode") == 0 && response.getIntValue("selector") > 0) {
             return true;
         }
@@ -269,12 +340,6 @@ System.out.println(n);
         List<Message> mesgs = new ArrayList<Message>();
 
         JSONObject message = new JSONObject();
-        JSONObject baseRequest = new JSONObject();
-        baseRequest.put("Uin", info.getWxuin());
-        baseRequest.put("Sid", info.getWxsid());
-        baseRequest.put("Skey", info.getSkey());
-        baseRequest.put("DeviceID", info.getDeceiveId());
-
         JSONObject syncKey = new JSONObject();
         JSONArray list = new JSONArray();
         String[] keyVals = info.getSyncKey().split("\\|");
@@ -288,17 +353,17 @@ System.out.println(n);
         syncKey.put("Count", list.size());
         syncKey.put("List", list);
         message.put("SyncKey", syncKey);
-        message.put("BaseRequest", baseRequest);
+        message.put("BaseRequest", buildBaseRequest(info));
+        log.info("Get message...");
         String rs = postContent("http://wx.qq.com/cgi-bin/mmwebwx-bin/webwxsync?sid=" + info.getWxsid() + "&skey=" + info.getSkey() + "&pass_ticket="
                 + info.getPass_ticket(), message.toJSONString());
 
         JSONObject resp = JSON.parseObject(rs);
+        log.info("Response: " + resp.toString());
+
         if(resp.getJSONObject("BaseResponse").getIntValue("Ret") == 0) {
             int mesgcount = resp.getIntValue("AddMsgCount");
-            StringBuilder result = new StringBuilder();
             StringBuilder mesgStr = new StringBuilder();
-
-            System.out.println(resp.toJSONString());
 
             if(mesgcount > 0) {
 
@@ -319,23 +384,8 @@ System.out.println(n);
                 }
             }
 
-            JSONObject synckey1 = resp.getJSONObject("SyncKey");
-            final StringBuilder synckeyStr = new StringBuilder();
-            if(synckey1.getIntValue("Count") > 0) {
-                JSONArray list1 = synckey1.getJSONArray("List");
-
-                for(int i=0; i<list1.size(); i++) {
-                    JSONObject keyVal = list1.getJSONObject(i);
-                    if(synckeyStr.length() > 0) {
-                        synckeyStr.append("|");
-                    }
-                    synckeyStr.append(keyVal.getIntValue("Key")).append("_").append(keyVal.getIntValue("Val"));
-                }
-
-            }
-
-            ((AuthInfo) getDefaultAuthenticationInfo().getLoginInfo()).setSyncKey(synckeyStr.toString());
-
+            ((AuthInfo) getDefaultAuthenticationInfo().getLoginInfo())
+                .setSyncKey(getSyncKey(resp.getJSONObject("SyncKey")));
         }
         else {
             System.out.println(" list content ");
@@ -592,6 +642,41 @@ System.out.println(n);
              System.out.println(response.getStringContent());
           }
        });
+    }
+
+    private Contact toContact(JSONObject contact) {
+        Contact cnc = new Contact();
+        cnc.setUserName(contact.getString("UserName"));
+        cnc.setNickName(contact.getString("NickName"));
+        cnc.setHeadImgUrl("https://wx.qq.com" + contact.getString("HeadImgUrl"));
+        cnc.setContactFlag(contact.getIntValue("ContactFlag"));
+        cnc.setpYQuanPin(contact.getString("PYQuanPin"));
+        cnc.setpYInitial(contact.getString("PYInitial"));
+        cnc.setRemarkName(contact.getString("RemarkName"));
+        cnc.setMemberCount(contact.getIntValue("MemberCount"));
+        cnc.setSex(contact.getIntValue("Sex"));
+        return cnc;
+    }
+
+    private String getSyncKey(JSONObject synckey1) {
+        final StringBuilder synckeyStr = new StringBuilder();
+
+        if(synckey1.getIntValue("Count") > 0) {
+            JSONArray list1 = synckey1.getJSONArray("List");
+
+            for(int i=0; i<list1.size(); i++) {
+                JSONObject keyVal = list1.getJSONObject(i);
+
+                if(synckeyStr.length() > 0) {
+                    synckeyStr.append("|");
+                }
+
+                synckeyStr.append(keyVal.getIntValue("Key")).append("_").append(keyVal.getIntValue("Val"));
+            }
+
+        }
+
+        return synckeyStr.toString();
     }
 
     private JSONObject buildBaseRequest(AuthInfo info) {

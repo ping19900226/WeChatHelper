@@ -12,6 +12,7 @@ public class AuthInfo {
     private String syncKey;
     private String userName;
     private String nickName;
+    private String displayName;
 
     public String getMessage() {
         return message;
@@ -86,5 +87,30 @@ public class AuthInfo {
 
     public void setNickName(String nickName) {
         this.nickName = nickName;
+    }
+
+    public String getDisplayName() {
+        return displayName;
+    }
+
+    public void setDisplayName(String displayName) {
+        this.displayName = displayName;
+    }
+
+    @Override
+    public String toString() {
+        return "AuthInfo{" +
+           "message='" + message + '\'' +
+           ", skey='" + skey + '\'' +
+           ", wxsid='" + wxsid + '\'' +
+           ", wxuin=" + wxuin +
+           ", pass_ticket='" + pass_ticket + '\'' +
+           ", isgrayscale=" + isgrayscale +
+           ", ret=" + ret +
+           ", deceiveId='" + deceiveId + '\'' +
+           ", syncKey='" + syncKey + '\'' +
+           ", userName='" + userName + '\'' +
+           ", nickName='" + nickName + '\'' +
+           '}';
     }
 }
