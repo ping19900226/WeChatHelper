@@ -12,9 +12,15 @@ import javafx.scene.image.ImageView;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
 import java.io.InputStream;
 
 public class QRCodeView extends View {
+    private WeChatRequestHandler handler = (WeChatRequestHandler) RequestHandler.getRequestHandler(3);
+    private static final Log log = LogFactory.getLog(QRCodeView.class);
+
     @Override
     public void start0(AnchorPane root) throws Exception {
         VBox imageBox = new VBox();
@@ -33,6 +39,8 @@ public class QRCodeView extends View {
             handler.getMain();
             String appid = handler.loadJs();
             final String uuid = handler.jsLogin(appid);
+
+            log.info("Get qrcode.");
 
             handler.getQrcode(uuid, new Callback<InputStream>() {
 
@@ -87,6 +95,4 @@ public class QRCodeView extends View {
     public int getPrefHeight() {
         return 130;
     }
-
-    private WeChatRequestHandler handler = (WeChatRequestHandler) RequestHandler.getRequestHandler(3);
 }
