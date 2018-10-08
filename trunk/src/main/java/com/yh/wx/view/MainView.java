@@ -12,6 +12,8 @@ import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
+import javafx.scene.Cursor;
+import javafx.scene.Parent;
 import javafx.scene.control.*;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.*;
@@ -24,7 +26,7 @@ public class MainView extends View {
     private VBox monitorPanel;
     private TabPane controlPanel;
     private MainController controller;
-
+    private SplitPane sp;
     private List<Contact> contacts;
 
     public MainView() {
@@ -43,6 +45,8 @@ public class MainView extends View {
                 System.out.println(message.getContent());
             }
         });
+
+        sp.setDividerPositions(0.2);
     }
 
     @Override
@@ -64,18 +68,18 @@ public class MainView extends View {
         VBox main = new VBox();
         main.setPrefWidth(parent.getPrefWidth());
         main.setPrefHeight(parent.getPrefHeight());
-        main.getChildren().add(new YHLabel("控制台"));
+        main.getChildren().add(new YHLabel(main, "控制台"));
         buildContentPanel(main);
         fitParentSize(parent, main);
         parent.getChildren().add(main);
     }
 
     private void buildContentPanel(VBox parent) {
-        SplitPane sp = new SplitPane();
-        sp.setDividerPositions(0.3);
+        sp = new SplitPane();
         buildLeftPanel(sp);
         buildRightPanel(sp);
         fitParentSize(parent, sp);
+        sp.setDividerPositions(0.2);
         parent.getChildren().add(sp);
     }
 
@@ -84,12 +88,12 @@ public class MainView extends View {
         contactPanel = new VBox();
         groupPanel = new VBox();
 
-        Label contactLabel = new YHLabel("联系人");
+        Label contactLabel = new YHLabel(panel, "联系人");
         panel.getChildren().add(contactLabel);
 
         buildScrollPanel(contactPanel, panel);
 
-        Label groupLabel = new YHLabel("群组");
+        Label groupLabel = new YHLabel(panel, "群组");
         panel.getChildren().add(groupLabel);
         buildScrollPanel(groupPanel, panel);
 
@@ -109,11 +113,11 @@ public class MainView extends View {
         VBox panel = new VBox();
         monitorPanel = new VBox();
 
-        Label monitorLabel = new YHLabel("监测列表");
+        Label monitorLabel = new YHLabel(panel, "监测列表");
         panel.getChildren().add(monitorLabel);
         buildScrollPanel(monitorPanel, panel);
 
-        Label controlLabel = new YHLabel("控制台");
+        Label controlLabel = new YHLabel(panel, "控制台");
         panel.getChildren().add(controlLabel);
         buildControlPanel();
         panel.getChildren().add(controlPanel);
@@ -168,6 +172,8 @@ public class MainView extends View {
         new Thread(new Runnable() {
             @Override
             public void run() {
+                groupPanel.getChildren().clear();
+                contactPanel.getChildren().clear();
                 contacts = controller.getContactList();
 
                 for(Contact contact : contacts) {
@@ -180,12 +186,12 @@ public class MainView extends View {
                         @Override
                         public void run() {
                             if(contact.getContactFlag() == 0) {
-                                groupPanel.getChildren().add(label);
                                 fitParentWidth(groupPanel, label);
+                                groupPanel.getChildren().add(label);
                             }
                             else {
+                                fitParentWidth(contactPanel, label);
                                 contactPanel.getChildren().add(label);
-                                fitParentWidth(groupPanel, label);
                             }
                         }
                     });
@@ -214,8 +220,6 @@ public class MainView extends View {
         }).start();
     }
 
-
-
     class YHLabel extends Label {
         private YHLabel() {
 
@@ -223,7 +227,6 @@ public class MainView extends View {
 
         public YHLabel(String text) {
             super(text);
-            this.setStyle("-fx-width:100%");
             this.setHeight(50);
             this.setPrefHeight(50);
             this.setAlignment(Pos.CENTER_LEFT);
@@ -231,15 +234,13 @@ public class MainView extends View {
             this.setStyle("-fx-background-color: #FFFFFF");
         }
 
-        public void hover() {
-            this.hoverProperty().addListener(new ChangeListener<Boolean>() {
-                @Override
-                public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
-                    if(newValue) {
+        public YHLabel(Region parent, String text) {
+            this(text);
+            fitParentWidth(parent, this);
+        }
 
-                    }
-                }
-            });
+        public void hover() {
+            this.setCursor(Cursor.HAND);
             this.setOnMouseEntered(new EventHandler<MouseEvent>() {
                 @Override
                 public void handle(MouseEvent event) {
@@ -247,7 +248,7 @@ public class MainView extends View {
                 }
             });
 
-            this.setOnMouseEntered(new EventHandler<MouseEvent>() {
+            this.setOnMouseExited(new EventHandler<MouseEvent>() {
                 @Override
                 public void handle(MouseEvent event) {
                     ((YHLabel) event.getSource()).setStyle("-fx-background-color:#FFFFFF");

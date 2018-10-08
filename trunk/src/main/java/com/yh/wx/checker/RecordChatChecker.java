@@ -111,7 +111,9 @@ public class RecordChatChecker implements ChatChecker {
         Monitor.get().monitor(fromUserName);
         Monitor.get().addTask(fromUserName, task);
         log.info("Start to record, [nick_name=" + contact.getNickName() + ", display_name=" +
-            contact.getDisplayName() + ", member_count=" + task.getMemberCount());
+            contact.getDisplayName() + ", member_count=" + task.getMemberCount() + "， start_keyword=" + startKeyWord
+            + ", end_keyword=" + endKeyWord + ", statistics_keyword=" + statisticsKeyWord + ", replay_keyword=" +
+            Arrays.toString(optionKeyWords.toArray()));
 
         String answer = "";
 
