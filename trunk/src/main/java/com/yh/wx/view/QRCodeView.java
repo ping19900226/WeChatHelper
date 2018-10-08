@@ -2,6 +2,8 @@ package com.yh.wx.view;
 
 import com.yh.common.request.Callback;
 import com.yh.common.request.RequestHandler;
+import com.yh.exception.YHException;
+import com.yh.exception.YHRTException;
 import com.yh.wx.request.WeChatRequestHandler;
 import com.yh.common.view.View;
 import javafx.application.Platform;
@@ -21,15 +23,17 @@ public class QRCodeView extends View {
     private WeChatRequestHandler handler = (WeChatRequestHandler) RequestHandler.getRequestHandler(3);
     private static final Log log = LogFactory.getLog(QRCodeView.class);
     private int loginCount = 0;
+    private Label textLabel;
+    private ImageView qrCodeView;
 
     @Override
     public void start0(AnchorPane root) throws Exception {
         VBox imageBox = new VBox();
         root.getChildren().add(imageBox);
-        final ImageView qrCodeView = new ImageView();
+        qrCodeView = new ImageView();
         qrCodeView.setFitWidth(300);
         qrCodeView.setFitHeight(300);
-        final Label textLabel = new Label();
+        textLabel = new Label();
         textLabel.setPrefWidth(300);
         textLabel.setPrefHeight(30);
         textLabel.setAlignment(Pos.CENTER);
@@ -37,17 +41,16 @@ public class QRCodeView extends View {
         imageBox.getChildren().addAll(qrCodeView, textLabel);
 
         final String uuid = getUUID();
-        login(uuid, qrCodeView, textLabel);
-        toContactListView(textLabel);
+        login(uuid);
     }
 
     @Override
-    public int getPrefWidth() {
+    public double getPrefWidth() {
         return 300;
     }
 
     @Override
-    public int getPrefHeight() {
+    public double getPrefHeight() {
         return 130;
     }
 
@@ -58,9 +61,9 @@ public class QRCodeView extends View {
         return uuid;
     }
 
-    private void login(String uuid, final ImageView image, final Label textLabel) {
+    private void login(String uuid) {
         try {
-            login0(uuid, image, textLabel);
+            login0(uuid);
         }
         catch(Exception e) {
             if(loginCount == 10) {
@@ -71,16 +74,27 @@ public class QRCodeView extends View {
 
             loginCount ++;
             log.info("Last login failed, try to the " + loginCount + "th login.");
-            login(uuid, image, textLabel);
+            login(uuid);
         }
     }
 
-    private void login0(String uuid, final ImageView image, final Label textLabel) throws Exception {
-        getQrCode(uuid, image);
-        checkScan(uuid);
+    private void login0(final String uuid) throws Exception {
+        getQrCode(uuid);
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    checkScan(uuid);
+                }
+                catch(Exception e) {
+                    log.error("Check scan error." + e.getMessage());
+                    throw new YHRTException(e);
+                }
+            }
+        }).start();
     }
 
-    private void getQrCode(String uuid, final ImageView qrCodeView) {
+    private void getQrCode(String uuid) throws YHException {
         handler.getQrcode(uuid, new Callback<InputStream>() {
 
             @Override
@@ -98,15 +112,16 @@ public class QRCodeView extends View {
         }
 
         handler.newLoginPage(res);
+        toContactListView();
     }
 
-    private void toContactListView(final Label textLabel) {
+    private void toContactListView() {
         Platform.runLater(new Runnable() {
             @Override
             public void run() {
                 try {
                     textLabel.setText("扫描完毕");
-                    new ContactListView0().start(new Stage());
+                    new MainView().start(new Stage());
                     close();
                 } catch (Exception e) {
                     log.error("Failed to open contact list view.", e);
