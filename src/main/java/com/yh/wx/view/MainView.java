@@ -87,9 +87,12 @@ public class MainView extends View {
 
     private void buildLeftPanel(SplitPane parent) {
         VBox panel = new VBox();
+        contactPanel = new VBox();
+        groupPanel = new VBox();
 
         Label contactLabel = new YHLabel("联系人");
         panel.getChildren().add(contactLabel);
+
         buildScrollPanel(contactPanel, panel);
 
         Label groupLabel = new YHLabel("群组");
@@ -103,7 +106,6 @@ public class MainView extends View {
     private void buildScrollPanel(VBox panel, VBox parent) {
         ScrollPane sp = new ScrollPane();
         sp.setFitToWidth(true);
-        panel = new VBox();
         sp.setContent(panel);
         fitParentSize(parent, sp);
         parent.getChildren().add(sp);
@@ -111,6 +113,7 @@ public class MainView extends View {
 
     private void buildRightPanel(SplitPane parent) {
         VBox panel = new VBox();
+        monitorPanel = new VBox();
 
         Label monitorLabel = new YHLabel("监测列表");
         panel.getChildren().add(monitorLabel);
