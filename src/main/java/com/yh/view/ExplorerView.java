@@ -1,5 +1,6 @@
 package com.yh.view;
 
+import com.yh.common.view.View;
 import com.yh.core.DownloadListener;
 import com.yh.core.YHFileUtil;
 import com.yh.db.JSDBHandler;
@@ -8,7 +9,6 @@ import javafx.concurrent.Worker;
 import javafx.scene.control.Alert;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.web.*;
-import javafx.stage.Stage;
 import javafx.util.Callback;
 import netscape.javascript.JSObject;
 import org.apache.commons.logging.Log;
@@ -18,7 +18,7 @@ import java.net.*;
 import java.nio.charset.Charset;
 import java.util.Map;
 
-public class ExplorerView extends View{
+public class ExplorerView extends View {
    private static final Log log = LogFactory.getLog(ExplorerView.class);
    private String url;
    private WebView view;

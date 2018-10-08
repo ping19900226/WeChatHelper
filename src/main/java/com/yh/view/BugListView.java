@@ -1,9 +1,11 @@
 package com.yh.view;
 
+import com.yh.common.request.RequestHandler;
+import com.yh.common.view.View;
 import com.yh.request.*;
 import com.yh.request.entity.DataGrid;
 import com.yh.util.Resource;
-import com.yh.view.factory.ArrayValueFactory;
+import com.yh.common.factory.ArrayValueFactory;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
@@ -20,7 +22,7 @@ import javafx.util.Callback;
 import java.util.List;
 import java.util.Properties;;
 
-public class BugListView extends View{
+public class BugListView extends View {
    private TableView view;
    private BugzillaRequestHandler handler;
    private View self;

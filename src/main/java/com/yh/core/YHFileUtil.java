@@ -188,6 +188,14 @@ public class YHFileUtil {
          type, null, null);
    }
 
+   public static void copyAllFile(String sourceDir, String targetDir, String[] fileTypes,
+      Map<String, String> type, List<String> ignoreDir)
+   {
+      File sdf = new File(sourceDir);
+      copyAllFile(sdf, sourceDir, targetDir, fileTypes == null ? null : Arrays.asList(fileTypes),
+         type, ignoreDir, null);
+   }
+
    private static void copyAllFile(File file, String sourceDir, String targetDir, List<String>
       fileTypes, Object type, List<String> ignoreDir, List<String> ignoreFile)
    {
@@ -199,11 +207,14 @@ public class YHFileUtil {
       }
    }
 
+   /**
+    *
+    */
    private static void copyAllFile0(File file, String sourceDir, String targetDir, List<String>
       fileTypes, Object types, List<String> ignoreDir, List<String> ignoreFile) throws IOException
    {
       if(file.isDirectory()) {
-         if(!ignoreDir.contains(file.getName())) {
+         if(ignoreDir == null ||!ignoreDir.contains(file.getName())) {
             File[] files = file.listFiles();
             for(File f : files) {
                copyAllFile0(f, sourceDir, targetDir, fileTypes, types, ignoreDir, ignoreFile);
@@ -211,7 +222,7 @@ public class YHFileUtil {
          }
       }
       else {
-         if(!ignoreFile.contains(file.getName())) {
+         if(ignoreFile == null || !ignoreFile.contains(file.getName())) {
             String ap = file.getAbsolutePath();
             String t = ap.substring(ap.lastIndexOf(".") + 1, ap.length());
             String tf = targetDir + ap.replace(sourceDir, "");
@@ -224,20 +235,20 @@ public class YHFileUtil {
                   tp = types.toString();
                }
 
-               tf = tf.replace(t, "") + tp;
+               tf = tp == null ? tf : tf.replace(t, "") + tp;
+            }
+
+            tf = tf.replace("\\", "/");
+            String dir = tf.substring(0, tf.lastIndexOf("/"));
+            File dirFile = new File(dir);
+            File targetFile = new File(tf);
+
+            if(!targetFile.exists()) {
+               dirFile.mkdirs();
+               targetFile.createNewFile();
             }
 
             if(fileTypes == null || fileTypes.contains(t)) {
-               tf = tf.replace("\\", "/");
-               String dir = tf.substring(0, tf.lastIndexOf("/"));
-               File dirFile = new File(dir);
-               File targetFile = new File(tf);
-
-               if(!targetFile.exists()) {
-                  dirFile.mkdirs();
-                  targetFile.createNewFile();
-               }
-
                System.out.println("copy file " + ap + " to " + tf);
                copy(file, new File(tf));
             }

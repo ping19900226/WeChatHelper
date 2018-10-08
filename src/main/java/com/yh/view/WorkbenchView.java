@@ -1,5 +1,6 @@
 package com.yh.view;
 
+import com.yh.common.view.View;
 import com.yh.util.Resource;
 import com.yh.util.Style;
 import com.yh.view.component.ImageButton;
@@ -11,7 +12,7 @@ import javafx.scene.layout.GridPane;
 
 import java.util.Properties;
 
-public class WorkbenchView extends View{
+public class WorkbenchView extends View {
 
    private GridPane quickBtnPane;
 

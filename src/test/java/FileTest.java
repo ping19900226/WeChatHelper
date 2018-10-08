@@ -1,7 +1,6 @@
 import com.yh.core.YHFileUtil;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 public class FileTest {
 
@@ -10,8 +9,10 @@ public class FileTest {
 //         "D:\\Server.txt");
 
       Map<String, String> p = new HashMap<String, String>();
-      p.put("java", "txt");
-      p.put("xml", "xml");
-      YHFileUtil.copyAllFile("F:\\ws\\yh", "D:\\yh", new String[]{"java", "xml"}, p);
+      p.put("java", "javax");
+      p.put("xml", "xmls");
+      YHFileUtil.copyAllFile("F:\\ws\\bi_8_0\\mixUp", "D:\\bi_8_0_txt\\mixUp", null, p, Arrays
+         .asList
+         (new String[]{".svn", "bihome", "node_modules", "js", ".idea"}));
    }
 }

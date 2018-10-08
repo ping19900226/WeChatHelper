@@ -1,8 +1,9 @@
 package com.yh.request;
 
+import com.yh.common.request.Params;
+import com.yh.common.request.RequestHandler;
 import com.yh.request.entity.DataGrid;
 import com.yh.util.StringUtil;
-import com.yh.request.entity.Bug;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -10,7 +11,7 @@ import org.jsoup.select.Elements;
 import java.util.ArrayList;
 import java.util.List;
 
-public class BugzillaRequestHandler extends RequestHandler{
+public class BugzillaRequestHandler extends RequestHandler {
 
    public BugzillaRequestHandler() {
       setDefaultAuthenticationInfo(new BugzillaAuthenticationInfo());

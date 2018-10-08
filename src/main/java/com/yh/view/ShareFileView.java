@@ -1,5 +1,6 @@
 package com.yh.view;
 
+import com.yh.common.view.View;
 import com.yh.core.*;
 import com.yh.util.Resource;
 import com.yh.util.Style;
@@ -15,7 +16,7 @@ import javafx.scene.layout.*;
 import java.io.*;
 import java.util.*;
 
-public class ShareFileView extends View{
+public class ShareFileView extends View {
 
    private static final int STATUS_BAR_HEIGHT = 30;
    private static final int MENU_BAR_HEIGHT = 25;

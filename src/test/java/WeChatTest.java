@@ -1,7 +1,7 @@
 
-import com.yh.request.RequestHandler;
-import com.yh.request.WeChatRequestHandler;
-import com.yh.view.wx.QRCodeView;
+import com.yh.common.request.RequestHandler;
+import com.yh.wx.request.WeChatRequestHandler;
+import com.yh.wx.view.QRCodeView;
 import javafx.application.Application;
 import javafx.stage.Stage;
 
