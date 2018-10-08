@@ -93,6 +93,30 @@
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-assembly-plugin</artifactId>
+                <version>2.6</version>
+                <executions>
+                    <execution>
+                        <!--绑定到package的生命周期上 -->
+                        <phase>package</phase>
+                        <goals>
+                            <goal>attached</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <configuration>
+                    <descriptorRefs>
+                        <descriptorRef>jar-with-dependencies</descriptorRef>
+                    </descriptorRefs>
+                    <archive>
+                        <manifest>
+                            <mainClass>com.yh.Launcher</mainClass>
+                        </manifest>
+                    </archive>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
                 <version>3.3</version>
                 <configuration>
@@ -142,8 +166,60 @@
                     </execution>
                 </executions>
             </plugin>
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>appassembler-maven-plugin</artifactId>
+                <version>1.1.1</version>
+                <executions>
+                    <execution>
+                        <id>make-assembly</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>assemble</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <configuration>
+                    <!-- 配置文件的目标目录 -->
+                    <configurationDirectory>conf</configurationDirectory>
+                    <!-- 从哪里拷贝配置文件 (默认src/main/config) -->
+                    <configurationSourceDirectory>conf</configurationSourceDirectory>
+                    <!-- 拷贝配置文件到上面的目录中 -->
+                    <copyConfigurationDirectory>true</copyConfigurationDirectory>
+                    <includeConfigurationDirectoryInClasspath>true</includeConfigurationDirectoryInClasspath>
+                    <!-- lib目录中jar的存放规则，默认是${groupId}/${artifactId}的目录格式，flat表示直接把jar放到lib目录 -->
+                    <repositoryLayout>flat</repositoryLayout>
+                    <!-- 打包的jar，以及maven依赖的jar放到这个目录里面 -->
+                    <repositoryName>lib</repositoryName>
+                    <!-- 根目录 -->
+                    <assembleDirectory>${project.build.directory}/${project.artifactId}-${project.version}</assembleDirectory>
+
+                    <binFileExtensions>
+                        <unix>.sh</unix>
+                    </binFileExtensions>
+                    <platforms>
+                        <!-- 生成linux平台的执行脚本 -->
+                        <platform>unix</platform>
+                    </platforms>
+
+                    <extraJvmArguments>
+                        -Xmx8000m
+                        -Djava.security.krb5.conf=$BASEDIR/conf/krb5.conf
+                        -Dhadoop.property.hadoop.client.keytab.file=$BASEDIR/conf/h_message_push.keytab
+                        -Dhadoop.property.hadoop.client.kerberos.principal=h_message_push@XIAOMI.HADOOP
+                        -Dhadoop.property.hadoop.security.authentication=kerberos
+                    </extraJvmArguments>
+                    <programs>
+                        <program>
+                            <mainClass>com.yh.Launcher</mainClass>
+                            <name>yh</name>
+                        </program>
+                    </programs>
+                </configuration>
+            </plugin>
         </plugins>
-        <pluginManagement>
+
+     <pluginManagement>
 
         </pluginManagement>
     </build>
