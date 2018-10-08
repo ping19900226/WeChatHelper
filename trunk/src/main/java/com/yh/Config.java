@@ -12,7 +12,7 @@ public class Config {
     private Properties props;
 
     private Config() {
-
+        props = new Properties();
     }
 
     public static Config get() {
@@ -26,7 +26,6 @@ public class Config {
     public void load(String path) {
         try {
             InputStream is = new FileInputStream(path);
-            props = new Properties();
             props.load(is);
         }
         catch(FileNotFoundException e) {
