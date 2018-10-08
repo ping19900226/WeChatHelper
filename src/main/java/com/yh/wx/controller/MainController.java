@@ -1,5 +1,6 @@
 package com.yh.wx.controller;
 
+import com.alibaba.fastjson.JSON;
 import com.yh.common.request.Callback;
 import com.yh.common.request.RequestHandler;
 import com.yh.wx.checker.MessageChecker;
@@ -35,14 +36,10 @@ public class MainController {
             log.info("Get init contact list error." + e.getMessage());
         }
 
-        Collections.sort(contacts, new Comparator<Contact>() {
-            @Override
-            public int compare(Contact o1, Contact o2) {
-                return o1.getpYQuanPin().compareToIgnoreCase(o2.getpYQuanPin());
-            }
-        });
+        sort(contacts);
 
         ContactCache.get().setContactList(contacts);
+        System.out.println(JSON.toJSONString(contacts));
         return contacts;
     }
 
@@ -56,7 +53,55 @@ public class MainController {
 
         return false;
     }
+
     public void startProcess(Callback<Message> callback) {
         MessageChecker.get().start(handler, callback);
+    }
+
+    public List<Contact> getMember(String username) {
+        Task task = Monitor.get().getTask(username);
+        List<Contact> contacts = new ArrayList<Contact>();
+
+        for(Map.Entry<String, Contact> entry : task.getMemberList().entrySet()) {
+            contacts.add(entry.getValue());
+        }
+
+        sort(contacts);
+        return contacts;
+    }
+
+    public List<Contact> getReadMembers(String username) {
+        Task task = Monitor.get().getTask(username);
+        List<Contact> contacts = new ArrayList<Contact>();
+
+        Set<String> allReadUsers = task.getAllReadUsers();
+
+        for(Map.Entry<String, Contact> entry : task.getMemberList().entrySet()) {
+            contacts.add(entry.getValue());
+        }
+
+        sort(contacts);
+        return contacts;
+    }
+
+    public List<Contact> getUnReadMembers(String username) {
+        Task task = Monitor.get().getTask(username);
+        List<Contact> contacts = new ArrayList<Contact>();
+
+        for(Map.Entry<String, Contact> entry : task.getMemberList().entrySet()) {
+            contacts.add(entry.getValue());
+        }
+
+        sort(contacts);
+        return contacts;
+    }
+
+    private void sort(List<Contact> contacts) {
+        Collections.sort(contacts, new Comparator<Contact>() {
+            @Override
+            public int compare(Contact o1, Contact o2) {
+                return o1.getpYQuanPin().compareToIgnoreCase(o2.getpYQuanPin());
+            }
+        });
     }
 }

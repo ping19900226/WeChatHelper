@@ -9,14 +9,18 @@ import com.yh.wx.request.WeChatRequestHandler;
 import com.yh.wx.view.QRCodeView;
 import javafx.application.Application;
 import javafx.stage.Stage;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 import java.io.File;
 import java.net.CookieHandler;
 import java.net.URLConnection;
 
 public class Launcher extends Application {
-   @Override
-   public void start(Stage primaryStage) throws Exception {
+    private Log log = LogFactory.getLog(Launcher.class);
+
+    @Override
+    public void start(Stage primaryStage) throws Exception {
 //      System.setProperty ("jsse.enableSNIExtension", "false");
 //      URLConnection.setContentHandlerFactory(new YHContentHandlerFactory());
 //      CookieHandler.setDefault(RequestHelper.getCookieHander());
@@ -26,20 +30,21 @@ public class Launcher extends Application {
 //      RequestHandler.regist(new WeChatRequestHandler());
 //      new WorkbenchView().start(new Stage());
 
-       System.setProperty ("jsse.enableSNIExtension", "false");
-       RequestHandler.regist(new WeChatRequestHandler());
-       load();
-       new QRCodeView().start(primaryStage);
-   }
+        System.setProperty("jsse.enableSNIExtension", "false");
+        RequestHandler.regist(new WeChatRequestHandler());
+        load();
+        new QRCodeView().start(primaryStage);
+    }
 
-   private void load() {
-        File confDir = new File((System.getProperty("user.home") + File.separator + "YH_CONF")
+    private void load() {
+        File confDir = new File((System.getProperty("user.home") + File.separator + "YH")
             .concat(File.separator).concat("conf"));
         String infoFile = confDir.getAbsolutePath() + File.separator + "default.conf";
+        log.info("config file: " + infoFile);
         Config.get().load(infoFile);
-   }
+    }
 
-   public static void main(String[] args) {
-      launch(args);
-   }
+    public static void main(String[] args) {
+        launch(args);
+    }
 }

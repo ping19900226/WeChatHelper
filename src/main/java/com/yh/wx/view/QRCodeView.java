@@ -61,25 +61,15 @@ public class QRCodeView extends View {
         return uuid;
     }
 
-    private void login(String uuid) {
+    private void login(final String uuid) {
         try {
-            login0(uuid);
+            getQrCode(uuid);
+        } catch (YHException e) {
+            alert("登录失败");
+            return;
         }
-        catch(Exception e) {
-            if(loginCount == 10) {
-                alert("登录失败");
-                log.error("Failed to login, with count 10");
-                return;
-            }
 
-            loginCount ++;
-            log.info("Last login failed, try to the " + loginCount + "th login.");
-            login(uuid);
-        }
-    }
 
-    private void login0(final String uuid) throws Exception {
-        getQrCode(uuid);
         new Thread(new Runnable() {
             @Override
             public void run() {
@@ -88,7 +78,18 @@ public class QRCodeView extends View {
                 }
                 catch(Exception e) {
                     log.error("Check scan error." + e.getMessage());
-                    throw new YHRTException(e);
+
+                    if(e instanceof StringIndexOutOfBoundsException) {
+                        if(loginCount == 10) {
+                            alert("登录失败");
+                            log.error("Failed to login, with count 10");
+                            return;
+                        }
+
+                        loginCount ++;
+                        log.info("Last login failed, try to the " + loginCount + "th login.");
+                        login(uuid);
+                    }
                 }
             }
         }).start();

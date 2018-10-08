@@ -23,7 +23,7 @@ public class MessageChecker {
         startKeyWord = startKeyWord == null ? "开始记录" : startKeyWord;
         endKeyWord = endKeyWord == null ? "结束记录" : endKeyWord;
         statisticsKeyword = statisticsKeyword == null ? "统计" : statisticsKeyword;
-        optionKeyWords = optionKeyWords == null ? new String[] {"收到"} : optionKeyWords;
+        optionKeyWords = optionKeyWords == null || optionKeyWords.length <= 0 ? new String[] {"收到"} : optionKeyWords;
 
         chatChecker = new RecordChatChecker(startKeyWord, endKeyWord,
             Arrays.asList(optionKeyWords), statisticsKeyword);
@@ -49,23 +49,29 @@ public class MessageChecker {
                             for(Message mesg : mesgs) {
                                 callback.call(mesg);
 
-                                for(String uu : Monitor.get().getMonitor()) {
-                                    if(mesg.getFromUserName().equals(uu)) {
-                                        AuthInfo info = ((AuthInfo) handler.getDefaultAuthenticationInfo()
-                                            .getLoginInfo());
-                                        chatChecker.process(mesg, info, handler);
-                                    }
-                                }
+                                AuthInfo info = ((AuthInfo) handler.getDefaultAuthenticationInfo()
+                                    .getLoginInfo());
+                                chatChecker.process(mesg, info, handler);
                             }
                         }
 
                         Thread.sleep(10000);
                     } catch (InterruptedException e) {
-                        e.printStackTrace();
-                        log.error("Thread error: " + e.getMessage());
+                        log.error("Thread error: ", e);
+
+                        try {
+                            Thread.sleep(3000);
+                        } catch (InterruptedException e1) {
+                            // ignore
+                        }
                     } catch (Exception e) {
-                        e.printStackTrace();
-                        log.error("Failed to send message: " + e.getMessage());
+                        log.error("Failed to send message: " , e);
+
+                        try {
+                            Thread.sleep(5000);
+                        } catch (InterruptedException e1) {
+                            // ignore
+                        }
                     }
                 }
             }

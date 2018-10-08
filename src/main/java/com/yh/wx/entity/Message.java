@@ -3,6 +3,7 @@ package com.yh.wx.entity;
 public class Message {
 
     private String fromUserName;
+    private String toUserName;
     private String content;
     private int createTime;
     private String id;
@@ -13,6 +14,14 @@ public class Message {
 
     public void setFromUserName(String fromUserName) {
         this.fromUserName = fromUserName;
+    }
+
+    public String getToUserName() {
+        return toUserName;
+    }
+
+    public void setToUserName(String toUserName) {
+        this.toUserName = toUserName;
     }
 
     public String getContent() {

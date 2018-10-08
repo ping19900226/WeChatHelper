@@ -17,42 +17,55 @@ public class AuthInfo {
     public String getMessage() {
         return message;
     }
+
     public void setMessage(String message) {
         this.message = message;
     }
+
     public String getSkey() {
         return skey;
     }
+
     public void setSkey(String skey) {
         this.skey = skey;
     }
+
     public String getWxsid() {
         return wxsid;
     }
+
     public void setWxsid(String wxsid) {
         this.wxsid = wxsid;
     }
+
     public int getWxuin() {
         return wxuin;
     }
+
     public void setWxuin(int wxuin) {
         this.wxuin = wxuin;
     }
+
     public String getPass_ticket() {
         return pass_ticket;
     }
+
     public void setPass_ticket(String pass_ticket) {
         this.pass_ticket = pass_ticket;
     }
+
     public int getIsgrayscale() {
         return isgrayscale;
     }
+
     public void setIsgrayscale(int isgrayscale) {
         this.isgrayscale = isgrayscale;
     }
+
     public int getRet() {
         return ret;
     }
+
     public void setRet(int ret) {
         this.ret = ret;
     }
@@ -100,17 +113,17 @@ public class AuthInfo {
     @Override
     public String toString() {
         return "AuthInfo{" +
-           "message='" + message + '\'' +
-           ", skey='" + skey + '\'' +
-           ", wxsid='" + wxsid + '\'' +
-           ", wxuin=" + wxuin +
-           ", pass_ticket='" + pass_ticket + '\'' +
-           ", isgrayscale=" + isgrayscale +
-           ", ret=" + ret +
-           ", deceiveId='" + deceiveId + '\'' +
-           ", syncKey='" + syncKey + '\'' +
-           ", userName='" + userName + '\'' +
-           ", nickName='" + nickName + '\'' +
-           '}';
+            "message='" + message + '\'' +
+            ", skey='" + skey + '\'' +
+            ", wxsid='" + wxsid + '\'' +
+            ", wxuin=" + wxuin +
+            ", pass_ticket='" + pass_ticket + '\'' +
+            ", isgrayscale=" + isgrayscale +
+            ", ret=" + ret +
+            ", deceiveId='" + deceiveId + '\'' +
+            ", syncKey='" + syncKey + '\'' +
+            ", userName='" + userName + '\'' +
+            ", nickName='" + nickName + '\'' +
+            '}';
     }
 }
