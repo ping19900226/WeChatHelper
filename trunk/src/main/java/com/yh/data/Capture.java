@@ -1,6 +1,5 @@
 package com.yh.data;
 
-import com.yh.request.RequestHandler;
 import com.yh.util.StringUtil;
 import org.apache.http.*;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
@@ -10,7 +9,6 @@ import org.apache.http.impl.client.HttpClients;
 import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.util.EntityUtils;
 
-import java.io.InputStream;
 import java.util.*;
 
 public abstract class Capture {

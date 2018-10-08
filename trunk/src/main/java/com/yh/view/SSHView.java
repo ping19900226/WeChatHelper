@@ -1,6 +1,7 @@
 package com.yh.view;
 
 import com.jcraft.jsch.ChannelShell;
+import com.yh.common.view.View;
 import com.yh.core.SSHConnection;
 import javafx.event.EventHandler;
 import javafx.scene.control.ScrollPane;
@@ -12,7 +13,7 @@ import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.List;
 
-public class SSHView extends View{
+public class SSHView extends View {
 
    private ScrollPane content;
    private SSHConnection conn;

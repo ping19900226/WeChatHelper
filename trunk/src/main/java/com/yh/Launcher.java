@@ -1,8 +1,11 @@
 package com.yh;
 
+import com.yh.common.request.RequestHandler;
+import com.yh.common.request.RequestHelper;
 import com.yh.request.*;
 import com.yh.util.Resource;
 import com.yh.view.WorkbenchView;
+import com.yh.wx.request.WeChatRequestHandler;
 import javafx.application.Application;
 import javafx.stage.Stage;
 

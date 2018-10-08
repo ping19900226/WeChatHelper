@@ -1,12 +1,11 @@
 package com.yh.request;
 
+import com.yh.common.request.Params;
+import com.yh.common.request.RequestHandler;
 import com.yh.util.StringUtil;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
-import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
-
-import java.io.IOException;
 
 public class ReviewBoardRequestHandler extends RequestHandler {
 
