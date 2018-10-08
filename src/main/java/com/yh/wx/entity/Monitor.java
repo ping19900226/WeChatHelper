@@ -4,7 +4,6 @@ import java.util.*;
 
 public class Monitor {
     private static Monitor monitor;
-    private Map<String, Contact> contactList = new HashMap<String, Contact>();
     private Map<String, List<Task>> tasks = new HashMap<String, List<Task>>();
 
     private Monitor() {
@@ -92,29 +91,5 @@ public class Monitor {
 
     public Set<String> getMonitor() {
         return tasks.keySet();
-    }
-
-    public List<Contact> getContactList() {
-        List<Contact> contacts = new ArrayList<Contact>();
-
-        for(Map.Entry<String, Contact> entry : contactList.entrySet()) {
-            contacts.add(entry.getValue());
-        }
-
-        return contacts;
-    }
-
-    public void setContactList(List<Contact> contactList) {
-        for(Contact c : contactList) {
-            this.contactList.put(c.getUserName(), c);
-        }
-    }
-
-    public Contact getContact(String username) {
-        return contactList.get(username);
-    }
-
-    public void addContact(Contact con) {
-        contactList.put(con.getUserName(), con);
     }
 }

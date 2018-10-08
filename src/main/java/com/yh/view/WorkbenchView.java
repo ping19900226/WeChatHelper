@@ -33,12 +33,12 @@ public class WorkbenchView extends View {
    }
 
    @Override
-   public int getPrefWidth() {
+   public double getPrefWidth() {
       return 380;
    }
 
    @Override
-   public int getPrefHeight() {
+   public double getPrefHeight() {
       return 500;
    }
 

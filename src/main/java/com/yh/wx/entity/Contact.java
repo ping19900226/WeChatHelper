@@ -291,4 +291,38 @@ public class Contact {
     public void setIsOwner(int isIwner) {
         this.isOwner = isOwner;
     }
+
+    @Override public boolean equals(Object o) {
+        if(this == o) {
+            return true;
+        }
+        if(o == null || getClass() != o.getClass()) {
+            return false;
+        }
+
+        Contact contact = (Contact) o;
+
+        if(uin != contact.uin) {
+            return false;
+        }
+        if(contactFlag != contact.contactFlag) {
+            return false;
+        }
+        if(chatRoomId != contact.chatRoomId) {
+            return false;
+        }
+        if(!userName.equals(contact.userName)) {
+            return false;
+        }
+        return nickName.equals(contact.nickName);
+    }
+
+    @Override public int hashCode() {
+        int result = uin;
+        result = 31 * result + userName.hashCode();
+        result = 31 * result + nickName.hashCode();
+        result = 31 * result + contactFlag;
+        result = 31 * result + chatRoomId;
+        return result;
+    }
 }

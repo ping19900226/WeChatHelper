@@ -1,6 +1,8 @@
 package com.yh.wx.view;
 
+import com.yh.common.request.Callback;
 import com.yh.common.request.RequestHandler;
+import com.yh.wx.checker.*;
 import com.yh.wx.entity.*;
 import com.yh.wx.request.WeChatRequestHandler;
 import com.yh.wx.request.WechatMessageStore;
@@ -30,6 +32,7 @@ public class ContactListView0 extends View {
    private Contact selectUser;
    private Map<String, Label> labels;
    private Map<String, String> maps;
+   private MessageChecker messageChecker;
 
     @Override
     public void start0(AnchorPane root) throws Exception {
@@ -56,7 +59,7 @@ public class ContactListView0 extends View {
             }
         });
 
-        Monitor.get().setContactList(cs);
+        ContactCache.get().setContactList(cs);
 
         VBox userList = new VBox();
         wrap.setContent(userList);
@@ -164,125 +167,17 @@ public class ContactListView0 extends View {
             }
         });
 
-        new Thread(new Runnable() {
+        messageChecker.start(handler, new Callback<Message>() {
             @Override
-            public void run() {
-                messageListener();
-            }
-        }).start();
+            public void call(Message message) {
+                Label l = labels.get(message.getFromUserName());
 
-    }
-
-    public void messageListener() {
-        while (true) {
-            try {
-                if(handler.isHasMessage()) {
-                   List<Message> mesgs = handler.webwxsync();
-
-                   for(Message mesg : mesgs) {
-                       Label l = labels.get(mesg.getFromUserName());
-
-                       for(String uu : Monitor.get().getMonitor()) {
-                           if(mesg.getFromUserName().equals(uu)) {
-                               AuthInfo info = ((AuthInfo) handler.getDefaultAuthenticationInfo().getLoginInfo());
-                               String[] cs = mesg.getContent().split("<br/>");
-
-                               if(cs.length == 1) {
-                                   String[] array = new String[2];
-                                   array[0] = info.getUserName();
-                                   array[1] = cs[0];
-                                   cs = array;
-                               }
-
-                               if(cs[1].startsWith("开始记录：") || cs[1].startsWith("@" + info.getNickName() + " ")) {
-                                   String content = mesg.getContent();
-                                   Task task = new Task();
-                                   task.setContent(content);
-                                   Contact contact = Monitor.get().getContact(mesg.getFromUserName());
-
-                                   task.setMemberCount(contact.getMemberCount());
-                                   task.setMemberList(contact.getMemberList());
-                                   task.setPublishUserName(cs[0]);
-                                   task.setUsername(mesg.getFromUserName());
-                                   handler.sendMesg("开始接龙统计", mesg.getFromUserName());
-                               }
-
-                               Task task = Monitor.get().getTask(mesg.getFromUserName());
-
-                               if(task != null) {
-                                   if(cs[1].equals("收到")) {
-
-                                       List<String> readUser = task.getReadUser();
-
-                                       if(readUser == null) {
-                                           readUser = new ArrayList<String>();
-                                           task.setReadUser(readUser);
-                                       }
-
-                                       readUser.add(cs[0]);
-                                   }
-
-                                   if(cs[1].equals("谁收到了")) {
-                                       String r = task.getReadUser().size() + "/" + task.getMemberCount() +
-                                           "人收到信息：\n";
-
-                                       List<String> allUser = new ArrayList<String>();
-
-                                       for(Map.Entry<String, Contact> entry : task.getMemberList().entrySet()) {
-                                           allUser.add(entry.getKey());
-                                       }
-
-                                       for(String u : task.getReadUser()) {
-                                           Contact c = task.getMemberList().get(u);
-
-                                           if(c == null) {
-                                               log.info("User empty");
-                                               continue;
-                                           }
-
-                                           if(c.getUserName().equals(u)) {
-                                               r += c.getDisplayName() == null ? c.getNickName() :
-                                                   c.getDisplayName() + "\n";
-                                           }
-                                       }
-
-                                       allUser.remove(task.getReadUser());
-
-                                       r += "以下人员未收到信息\n";
-
-                                       for(String u : allUser) {
-                                           Contact c = task.getMemberList().get(u);
-
-                                           if(c.getUserName().equals(u)) {
-                                               r += c.getDisplayName() == null ? c.getNickName() :
-                                                   c.getDisplayName() + "\n";
-                                           }
-                                       }
-
-                                       handler.sendMesg(r, mesg.getFromUserName());
-                                   }
-                               }
-                           }
-                       }
-
-                       if(l != null) {
-                           l.setStyle(l.getStyle() + "-fx-text-fill: green");
-                       }
-                   }
+                if(l != null) {
+                    l.setStyle(l.getStyle() + "-fx-text-fill: green");
                 }
-
-                Thread.sleep(10000);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-                log.error("Thread error: " + e.getMessage());
-            } catch (Exception e) {
-               e.printStackTrace();
-               log.error("Failed to send message: " + e.getMessage());
             }
-        }
+        });
     }
-
-
 
     private void initLabel(Label l, Contact c) {
         l.setGraphic(new ImageView(new Image(c.getHeadImgUrl())));
@@ -336,9 +231,9 @@ public class ContactListView0 extends View {
                 Contact con = (Contact) ((MenuItem)event.getSource()).getUserData();
                 Monitor.get().monitor(con.getUserName());
 
-                Contact contact = Monitor.get().getContact(con.getUserName());
+                Contact contact = ContactCache.get().getContact(con.getUserName());
                 contact = contact == null ? con : contact;
-                Monitor.get().addContact(con);
+                ContactCache.get().addContact(con);
 
                 try {
                     contact.setMemberList(handler.batchGetContact(contact.getUserName(), contact.getMemberList()));

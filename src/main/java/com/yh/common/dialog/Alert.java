@@ -68,12 +68,12 @@ public class Alert extends View {
    }
 
    @Override
-   public int getPrefWidth() {
+   public double getPrefWidth() {
       return 200;
    }
 
    @Override
-   public int getPrefHeight() {
+   public double getPrefHeight() {
       return 120;
    }
 

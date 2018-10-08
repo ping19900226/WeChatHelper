@@ -6,6 +6,7 @@ import com.yh.request.*;
 import com.yh.util.Resource;
 import com.yh.view.WorkbenchView;
 import com.yh.wx.request.WeChatRequestHandler;
+import com.yh.wx.view.QRCodeView;
 import javafx.application.Application;
 import javafx.stage.Stage;
 
@@ -16,30 +17,26 @@ import java.net.URLConnection;
 public class Launcher extends Application {
    @Override
    public void start(Stage primaryStage) throws Exception {
-      System.setProperty ("jsse.enableSNIExtension", "false");
-      URLConnection.setContentHandlerFactory(new YHContentHandlerFactory());
-      CookieHandler.setDefault(RequestHelper.getCookieHander());
-      checkAndCreateFolder();
-      RequestHandler.regist(new BugzillaRequestHandler());
-      RequestHandler.regist(new ReviewBoardRequestHandler());
-      RequestHandler.regist(new WeChatRequestHandler());
-      new WorkbenchView().start(new Stage());
+//      System.setProperty ("jsse.enableSNIExtension", "false");
+//      URLConnection.setContentHandlerFactory(new YHContentHandlerFactory());
+//      CookieHandler.setDefault(RequestHelper.getCookieHander());
+//      checkAndCreateFolder();
+//      RequestHandler.regist(new BugzillaRequestHandler());
+//      RequestHandler.regist(new ReviewBoardRequestHandler());
+//      RequestHandler.regist(new WeChatRequestHandler());
+//      new WorkbenchView().start(new Stage());
+
+       System.setProperty ("jsse.enableSNIExtension", "false");
+       RequestHandler.regist(new WeChatRequestHandler());
+       load();
+       new QRCodeView().start(primaryStage);
    }
 
-   private void checkAndCreateFolder() {
-      File confDir = new File(Resource.documentPath().concat(File.separator).concat("conf"));
-
-      if(!confDir.exists()) {
-         confDir.mkdirs();
-      }
-
-      String infoFile = confDir.getAbsolutePath() + File.separator + "default.info";
-
-      File downloadDir = new File(Resource.downloadPath());
-
-      if(!downloadDir.exists()) {
-         downloadDir.mkdirs();
-      }
+   private void load() {
+        File confDir = new File((System.getProperty("user.home") + File.separator + "YH_CONF")
+            .concat(File.separator).concat("conf"));
+        String infoFile = confDir.getAbsolutePath() + File.separator + "default.conf";
+        Config.get().load(infoFile);
    }
 
    public static void main(String[] args) {

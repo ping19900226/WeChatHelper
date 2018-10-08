@@ -1,8 +1,7 @@
 package com.yh.wx.entity;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.awt.datatransfer.StringSelection;
+import java.util.*;
 
 public class Task {
     private String content;
@@ -11,7 +10,7 @@ public class Task {
     private int memberCount;
     private String owner;
     private Map<String, Contact> memberList;
-    private List<String> readUser;
+    private Map<String, Set<String>> readUsers;
 
     public Task() {
     }
@@ -76,11 +75,25 @@ public class Task {
         }
     }
 
-    public List<String> getReadUser() {
-        return readUser;
+    public Set<String> getReadUsers(String key) {
+        return readUsers.get(key);
     }
 
-    public void setReadUser(List<String> readUser) {
-        this.readUser = readUser;
+    public void setReadUsers(String key, Set<String> readUsers) {
+        this.readUsers.put(key, readUsers);
+    }
+
+    public int countReadUsers() {
+        return -1;
+    }
+
+    public Set<String> getAllReadUsers() {
+        Set<String> users = new HashSet<String>();
+
+        for(Map.Entry<String, Set<String>> entry : readUsers.entrySet()) {
+            users.addAll(entry.getValue());
+        }
+
+        return users;
     }
 }
