@@ -1,12 +1,19 @@
 package com.yh.wx.view;
 
 import com.yh.Config;
+import com.yh.common.request.Callback;
 import com.yh.common.view.View;
 import com.yh.wx.controller.MainController;
 import com.yh.wx.entity.*;
+import javafx.application.Platform;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.*;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.*;
 
 import java.util.List;
@@ -22,38 +29,20 @@ public class MainView extends View {
 
     public MainView() {
         controller = new MainController();
-        contacts = controller.getContactList();
     }
 
     @Override
     public void start0(AnchorPane root) throws Exception {
         buildMainPanel(root);
 
-        for(Contact contact : contacts) {
-            Label label = new YHLabel(contact.getNickName());
-            label.setUserData(contact);
+        refreshContactList();
 
-            if(contact.getContactFlag() == 0) {
-                groupPanel.getChildren().add(label);
+        controller.startProcess(new Callback<Message>() {
+            @Override
+            public void call(Message message) {
+                System.out.println(message.getContent());
             }
-            else {
-                contactPanel.getChildren().add(label);
-            }
-        }
-
-        String[] monitors = Config.get().getArray("monitor.list");
-
-        for(String monitor : monitors) {
-            Contact monitorContact = ContactCache.get().getContact(monitor);
-
-            if(monitorContact != null) {
-                Label label = new YHLabel(monitorContact.getNickName());
-                label.setUserData(monitorContact);
-                monitorPanel.getChildren().add(label);
-
-                Monitor.get().monitor(monitor);
-            }
-        }
+        });
     }
 
     @Override
@@ -64,6 +53,11 @@ public class MainView extends View {
     @Override
     public double getPrefHeight() {
         return -1;
+    }
+
+    @Override
+    protected String getTitle() {
+        return "控制台";
     }
 
     private void buildMainPanel(AnchorPane parent) {
@@ -145,32 +139,82 @@ public class MainView extends View {
     private void fitParentSize(Region parent, Region sub) {
         fitParentWidth(parent, sub);
         fitParentHeight(parent, sub);
-
     }
 
     private void fitParentWidth(Region parent, Region sub) {
-        //sub.widthProperty().bind(parent.widthProperty());
         sub.prefWidthProperty().bind(parent.prefWidthProperty());
         sub.maxWidthProperty().bind(parent.maxWidthProperty());
         sub.minWidthProperty().bind(parent.minWidthProperty());
     }
 
     private void fitParentHeight(Region parent, Region sub) {
-        //sub.heightProperty().bind(parent.heightProperty());
         sub.prefHeightProperty().bind(parent.prefHeightProperty());
         sub.maxHeightProperty().bind(parent.maxHeightProperty());
         sub.minHeightProperty().bind(parent.minHeightProperty());
     }
 
-    private void fitParentHeight(Region parent, Region sub, double subtractNum, double divideNum) {
-        //sub.heightProperty().bind(parent.heightProperty());
-//        sub.setMinHeight((parent.getMinHeight() - subtractNum) / divideNum);
-//        sub.setPrefHeight((parent.getPrefHeight() - subtractNum) / divideNum);
-//        sub.setMaxHeight((parent.getMinWidth() - subtractNum) / divideNum);
-//        sub.prefHeightProperty().bind(parent.prefHeightProperty().subtract(subtractNum).divide(divideNum));
-//        sub.maxHeightProperty().bind(parent.maxHeightProperty().subtract(subtractNum).divide(divideNum));
-//        sub.minHeightProperty().bind(parent.minHeightProperty().subtract(subtractNum).divide(divideNum));
+    private void onConcatItemContextMenu(Label label) {
+        ContextMenu menu = new ContextMenu();
+        label.setContextMenu(menu);
+
+        MenuItem record = new MenuItem("记录");
+        menu.getItems().add(record);
+        MenuItem refresh = new MenuItem("刷新");
+        menu.getItems().add(refresh);
+        refresh.setOnAction(new RefreshContactListListener());
     }
+
+    private void refreshContactList() {
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                contacts = controller.getContactList();
+
+                for(Contact contact : contacts) {
+                    YHLabel label = new YHLabel(contact.getNickName());
+                    label.setUserData(contact);
+                    label.hover();
+                    onConcatItemContextMenu(label);
+
+                    Platform.runLater(new Runnable() {
+                        @Override
+                        public void run() {
+                            if(contact.getContactFlag() == 0) {
+                                groupPanel.getChildren().add(label);
+                                fitParentWidth(groupPanel, label);
+                            }
+                            else {
+                                contactPanel.getChildren().add(label);
+                                fitParentWidth(groupPanel, label);
+                            }
+                        }
+                    });
+                }
+
+//                String[] monitors = Config.get().getArray("monitor.list");
+//
+//                for(String monitor : monitors) {
+//                    Contact monitorContact = ContactCache.get().getContact(monitor);
+//
+//                    if(monitorContact != null) {
+//
+//                        Platform.runLater(new Runnable() {
+//                            @Override
+//                            public void run() {
+//                                Label label = new YHLabel(monitorContact.getNickName());
+//                                label.setUserData(monitorContact);
+//                                monitorPanel.getChildren().add(label);
+//                            }
+//                        });
+//
+//                        Monitor.get().monitor(monitor);
+//                    }
+//                }
+            }
+        }).start();
+    }
+
+
 
     class YHLabel extends Label {
         private YHLabel() {
@@ -179,16 +223,44 @@ public class MainView extends View {
 
         public YHLabel(String text) {
             super(text);
-            this.setWidth(Region.USE_COMPUTED_SIZE);
+            this.setStyle("-fx-width:100%");
             this.setHeight(50);
             this.setPrefHeight(50);
             this.setAlignment(Pos.CENTER_LEFT);
-            this.setPadding(new Insets(10, 0, 10, 10));
+            this.setPadding(new Insets(5, 0, 5, 5));
+            this.setStyle("-fx-background-color: #FFFFFF");
+        }
+
+        public void hover() {
+            this.hoverProperty().addListener(new ChangeListener<Boolean>() {
+                @Override
+                public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
+                    if(newValue) {
+
+                    }
+                }
+            });
+            this.setOnMouseEntered(new EventHandler<MouseEvent>() {
+                @Override
+                public void handle(MouseEvent event) {
+                    ((YHLabel) event.getSource()).setStyle("-fx-background-color:#EFEFEF");
+                }
+            });
+
+            this.setOnMouseEntered(new EventHandler<MouseEvent>() {
+                @Override
+                public void handle(MouseEvent event) {
+                    ((YHLabel) event.getSource()).setStyle("-fx-background-color:#FFFFFF");
+                }
+            });
         }
     }
 
-    @Override
-    protected String getTitle() {
-        return "控制台";
+    class RefreshContactListListener implements EventHandler<ActionEvent> {
+
+        @Override
+        public void handle(ActionEvent event) {
+            refreshContactList();
+        }
     }
 }

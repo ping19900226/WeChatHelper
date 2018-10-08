@@ -35,12 +35,18 @@ public class RecordChatChecker implements ChatChecker {
     {
         String[] cs = message.getContent().split("<br/>");
         String fromUserName = message.getFromUserName();
+        //对于别人在群里面发送的消息，ToUserName 是自己，FromUserName 是群 Content 包含 发送人:<br/>内容
 
         if(cs.length == 1) {
             String[] array = new String[2];
             array[0] = info.getUserName();
             array[1] = cs[0];
             cs = array;
+            //对于自己在群里面发送的消息，ToUserName 是群  FromUserName是自己
+            fromUserName = message.getToUserName();
+        }
+        else {
+            cs[0] = cs[0].replace(":", "");
         }
 
         if(cs[1].startsWith(startKeyWord) || cs[1].startsWith("@" + info.getNickName() + " ")) {
@@ -48,36 +54,46 @@ public class RecordChatChecker implements ChatChecker {
             Task task = new Task();
             task.setContent(cs[1]);
             task.setMemberCount(contact.getMemberCount());
-            task.setMemberList(contact.getMemberList());
             task.setPublishUserName(cs[0]);
             task.setUsername(fromUserName);
+            Monitor.get().monitor(fromUserName);
+            Monitor.get().addTask(fromUserName, task);
+            log.info("Start to record, [nick_name=" + contact.getNickName() + ", display_name=" +
+                contact.getDisplayName() + ", member_count=" + task.getMemberCount());
             handler.sendMesg("开始接龙统计", fromUserName);
+
+            List<Contact> contactDetails = handler.batchGetContact(contact.getEncryChatRoomId(),
+                contact.getMemberList());
+            task.setMemberList(contactDetails);
         }
 
-        Task task = Monitor.get().getTask(fromUserName);
+        for(String uu : Monitor.get().getMonitor()) {
+            if(fromUserName.equals(uu)) {
+                Task task = Monitor.get().getTask(fromUserName);
 
-        if(task != null) {
-            if(cs[1].equals(endKeyWord)) {
-                end(fromUserName, task, handler);
-                return;
-            }
+                if(task != null) {
+                    if(cs[1].equals(endKeyWord)) {
+                        end(fromUserName, task, handler);
+                        return;
+                    }
 
-            if(optionKeyWords.contains(cs[1])) {
-                Set<String> readUserList = task.getReadUsers(cs[1]);
+                    if(optionKeyWords.contains(cs[1])) {
+                        Set<String> readUserList = task.getReadUsers(cs[1]);
 
-                if(readUserList == null) {
-                    readUserList = new HashSet<String>();
-                    task.setReadUsers(cs[1], readUserList);
+                        if(readUserList == null) {
+                            readUserList = new HashSet<String>();
+                            task.setReadUsers(cs[1], readUserList);
+                        }
+
+                        readUserList.add(cs[0]);
+                    }
+
+                    if(cs[1].startsWith(statisticsKeyWord)) {
+                        statistics(cs[1].replace(statisticsKeyWord, ""), fromUserName, task, handler);
+                    }
                 }
-
-                readUserList.add(cs[0]);
-            }
-
-            if(cs[1].startsWith(statisticsKeyWord)) {
-                statistics(cs[1].replace(statisticsKeyWord, ""), fromUserName, task, handler);
             }
         }
-
     }
 
     private void statistics(String mesg, String fromUserName, Task task, WeChatRequestHandler
@@ -85,12 +101,14 @@ public class RecordChatChecker implements ChatChecker {
     {
         Set<String> users;
 
-        if(mesg != null) {
+        if(!mesg.isEmpty()) {
             users = task.getReadUsers(mesg);
         }
         else {
             users = task.getAllReadUsers();
         }
+
+        users = users == null ? new HashSet<>() : users;
 
         String r = users.size() + "/" + task.getMemberCount() +
             "人回复了信息：\n";
@@ -109,23 +127,24 @@ public class RecordChatChecker implements ChatChecker {
                 continue;
             }
 
-            if(c.getUserName().equals(u)) {
-                r += c.getDisplayName() == null ? c.getNickName() :
-                    c.getDisplayName() + "\n";
-            }
+            r += (c.getDisplayName() == null || c.getDisplayName().isEmpty() ? c.getNickName() :
+                c.getDisplayName()) + "\n";
         }
 
-        allUser.remove(users);
+        allUser.removeAll(users);
 
         r += "以下人员未回复信息\n";
 
         for(String u : allUser) {
             Contact c = task.getMemberList().get(u);
 
-            if(c.getUserName().equals(u)) {
-                r += c.getDisplayName() == null ? c.getNickName() :
-                    c.getDisplayName() + "\n";
+            if(c == null) {
+                log.info("User empty");
+                continue;
             }
+
+            r += (c.getDisplayName() == null || c.getDisplayName().isEmpty() ? c.getNickName() :
+                c.getDisplayName()) + "\n";
         }
 
         handler.sendMesg(r, fromUserName);

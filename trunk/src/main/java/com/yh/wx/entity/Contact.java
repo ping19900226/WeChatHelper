@@ -305,9 +305,6 @@ public class Contact {
         if(uin != contact.uin) {
             return false;
         }
-        if(contactFlag != contact.contactFlag) {
-            return false;
-        }
         if(chatRoomId != contact.chatRoomId) {
             return false;
         }
@@ -321,7 +318,6 @@ public class Contact {
         int result = uin;
         result = 31 * result + userName.hashCode();
         result = 31 * result + nickName.hashCode();
-        result = 31 * result + contactFlag;
         result = 31 * result + chatRoomId;
         return result;
     }

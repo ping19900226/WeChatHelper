@@ -52,7 +52,7 @@ public class Config {
 
     public String[] getArray(String key) {
         Object val =  getVal(key);
-        String value = val == null ? "" : val.toString();
-        return value.split(",");
+        String value = val == null ? null : val.toString();
+        return value == null ? null : value.split(",");
     }
 }

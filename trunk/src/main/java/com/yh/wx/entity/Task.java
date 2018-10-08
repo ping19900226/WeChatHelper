@@ -10,7 +10,7 @@ public class Task {
     private int memberCount;
     private String owner;
     private Map<String, Contact> memberList;
-    private Map<String, Set<String>> readUsers;
+    private Map<String, Set<String>> readUsers = new HashMap<>();
 
     public Task() {
     }
@@ -89,6 +89,10 @@ public class Task {
 
     public Set<String> getAllReadUsers() {
         Set<String> users = new HashSet<String>();
+
+        if(readUsers == null) {
+            return null;
+        }
 
         for(Map.Entry<String, Set<String>> entry : readUsers.entrySet()) {
             users.addAll(entry.getValue());

@@ -162,8 +162,6 @@ public class WeChatRequestHandler extends RequestHandler {
                     }
                 }
             }
-
-            log.info("__________________Contact list : " + contactList.toString());
         }
 
         return data;
@@ -185,7 +183,6 @@ public class WeChatRequestHandler extends RequestHandler {
             @Override
             public void handle(Response response) throws Exception {
                 String text = response.getStringContent();
-                log.info("Get init contact list: " + text);
                 JSONObject resp = JSON.parseObject(text);
 
                 if(resp.getJSONObject("BaseResponse").getIntValue("Ret") == 0) {
@@ -245,11 +242,12 @@ public class WeChatRequestHandler extends RequestHandler {
         message.put("Count", searchContactList.size());
 
         JSONArray list = new JSONArray();
+        message.put("List", list);
 
         for(Contact c : searchContactList) {
             JSONObject obj = new JSONObject();
             obj.put("UserName", c.getUserName());
-            obj.put("EncryCharRoomId", chatRoomId);
+            obj.put("EncryCharRoomId", chatRoomId == null ? "" : chatRoomId);
             list.add(obj);
         }
 
@@ -383,6 +381,7 @@ public class WeChatRequestHandler extends RequestHandler {
                     msg.setFromUserName(mesg.getString("FromUserName"));
                     msg.setContent(mesg.getString("Content"));
                     msg.setCreateTime(mesg.getIntValue("CreateTime"));
+                    msg.setToUserName(mesg.getString("ToUserName"));
 
                     WechatMessageStore.storeMessage(msg);
                 }
@@ -759,6 +758,7 @@ public class WeChatRequestHandler extends RequestHandler {
             this.info.setSkey(error.getSkey());
             this.info.setWxsid(error.getWxsid());
             this.info.setWxuin(error.getWxuin());
+            log.info("Auth info: " + this.info);
         }
 
         private AuthInfo info;
