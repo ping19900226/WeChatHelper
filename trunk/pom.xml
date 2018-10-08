@@ -122,7 +122,7 @@
                     </archive>
                     <classesDirectory>
                     </classesDirectory>
-                    <!--<outputDirectory>D:/YH/app</outputDirectory>-->
+                    <outputDirectory>/Users/ping/app</outputDirectory>
                 </configuration>
             </plugin>
             <plugin>
@@ -137,7 +137,7 @@
                             <goal>copy-dependencies</goal>
                         </goals>
                         <configuration>
-                            <outputDirectory>D:/YH/app/lib</outputDirectory>
+                            <outputDirectory>/Users/ping/app/lib</outputDirectory>
                         </configuration>
                     </execution>
                 </executions>
