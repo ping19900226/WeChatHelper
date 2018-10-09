@@ -117,7 +117,8 @@ public class RecordChatChecker implements ChatChecker {
             contact.getDisplayName() + ", member_count=" + task.getMemberCount() +
             "， start_keyword=" + startKeyWord + ", end_keyword=" + endKeyWord + ", " +
             "statistics_keyword=" + statisticsKeyWord + ", replay_keyword=" +
-            Arrays.toString(optionKeyWords.toArray()));
+            Arrays.toString(optionKeyWords.toArray()) + ", publish_user=" +
+            task.getPublishUserName() + ", owner=" + task.getOwner());
 
         String answer = "";
 
@@ -149,8 +150,8 @@ public class RecordChatChecker implements ChatChecker {
                 Task task = Monitor.get().getTask(fromUserName);
 
                 if(task != null) {
-                    if(message.equals(endKeyWord) && fromUserName.equals(task.getPublishUserName())
-                        || fromUserName.equals(task.getOwner()))
+                    if(message.equals(endKeyWord) && (fromUserName.equals(task.getPublishUserName())
+                        || fromUserName.equals(task.getOwner())))
                     {
                         end(fromUserName, task, handler);
                         return;
@@ -167,8 +168,8 @@ public class RecordChatChecker implements ChatChecker {
                         readUserList.add(sendUserName);
                     }
 
-                    if(message.startsWith(statisticsKeyWord) && fromUserName.equals(task.getOwner())
-                    || fromUserName.equals(task.getPublishUserName()))
+                    if(message.startsWith(statisticsKeyWord) && (fromUserName.equals(task.getOwner())
+                    || fromUserName.equals(task.getPublishUserName())))
                     {
                         statistics(message.replace(statisticsKeyWord, ""), fromUserName,
                             task, handler);

@@ -58,44 +58,6 @@ public class MainController {
         MessageChecker.get().start(handler, callback);
     }
 
-    public List<Contact> getMember(String username) {
-        Task task = Monitor.get().getTask(username);
-        List<Contact> contacts = new ArrayList<Contact>();
-
-        for(Map.Entry<String, Contact> entry : task.getMemberList().entrySet()) {
-            contacts.add(entry.getValue());
-        }
-
-        sort(contacts);
-        return contacts;
-    }
-
-    public List<Contact> getReadMembers(String username) {
-        Task task = Monitor.get().getTask(username);
-        List<Contact> contacts = new ArrayList<Contact>();
-
-        Set<String> allReadUsers = task.getAllReadUsers();
-
-        for(Map.Entry<String, Contact> entry : task.getMemberList().entrySet()) {
-            contacts.add(entry.getValue());
-        }
-
-        sort(contacts);
-        return contacts;
-    }
-
-    public List<Contact> getUnReadMembers(String username) {
-        Task task = Monitor.get().getTask(username);
-        List<Contact> contacts = new ArrayList<Contact>();
-
-        for(Map.Entry<String, Contact> entry : task.getMemberList().entrySet()) {
-            contacts.add(entry.getValue());
-        }
-
-        sort(contacts);
-        return contacts;
-    }
-
     private void sort(List<Contact> contacts) {
         Collections.sort(contacts, new Comparator<Contact>() {
             @Override

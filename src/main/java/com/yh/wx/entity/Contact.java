@@ -1,5 +1,6 @@
 package com.yh.wx.entity;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -103,9 +104,14 @@ public class Contact {
 
     public void setMemberList(List<Contact> memberList) {
         this.memberList = memberList;
+        memberMap = new HashMap<String, Contact>();
 
         for (Contact c : memberList) {
             memberMap.put(c.getUserName(), c);
+
+            if(c.getIsOwner() == 1) {
+                this.setOwner(c.getUserName());
+            }
         }
     }
 
