@@ -38,21 +38,6 @@ public class ContactCache {
         }
     }
 
-    public void updateContactMemberList(String username, List<Contact> memberList) {
-        Contact contact = getContact(username);
-
-        if(contact != null) {
-            contact.setMemberList(memberList);
-
-            for(Contact member : memberList) {
-                if(member.getIsOwner() == 1) {
-                    contact.setOwner(member.getOwner());
-                    return;
-                }
-            }
-        }
-    }
-
     public Contact getContact(String username) {
         return contactDataCache.get(username);
     }

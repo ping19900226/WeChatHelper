@@ -33,13 +33,12 @@ public class MainController {
             }
         }
         catch(Exception e) {
-            log.info("Get init contact list error." + e.getMessage());
+            log.info("Get init contact list error.", e);
         }
 
         sort(contacts);
 
         ContactCache.get().setContactList(contacts);
-        System.out.println(JSON.toJSONString(contacts));
         return contacts;
     }
 

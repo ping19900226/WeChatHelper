@@ -38,7 +38,7 @@ public class MainView extends View {
         controller.startProcess(new Callback<Message>() {
             @Override
             public void call(Message message) {
-                System.out.println(message.getContent());
+                //System.out.println(message.getContent());
             }
         });
 
@@ -168,9 +168,15 @@ public class MainView extends View {
         new Thread(new Runnable() {
             @Override
             public void run() {
-                groupPanel.getChildren().clear();
-                contactPanel.getChildren().clear();
                 contacts = controller.getContactList();
+
+                Platform.runLater(new Runnable() {
+                    @Override
+                    public void run() {
+                        groupPanel.getChildren().clear();
+                        contactPanel.getChildren().clear();
+                    }
+                });
 
                 for(Contact contact : contacts) {
                     YHLabel label = new YHLabel(contact.getNickName());

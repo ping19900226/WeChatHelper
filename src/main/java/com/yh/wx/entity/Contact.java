@@ -48,7 +48,6 @@ public class Contact {
     private int isOwner;
     private boolean initMenber;
     private Map<String, Contact> memberMap;
-    private String owner;
 
     public int getUin() {
         return uin;
@@ -71,7 +70,7 @@ public class Contact {
     }
 
     public void setNickName(String nickName) {
-        this.nickName = nickName;
+        this.nickName = replaceEmoji(nickName);
     }
 
     public String getHeadImgUrl() {
@@ -106,12 +105,8 @@ public class Contact {
         this.memberList = memberList;
         memberMap = new HashMap<String, Contact>();
 
-        for (Contact c : memberList) {
-            memberMap.put(c.getUserName(), c);
-
-            if(c.getIsOwner() == 1) {
-                this.setOwner(c.getUserName());
-            }
+        for(Contact member : memberList) {
+            memberMap.put(member.getUserName(), member);
         }
     }
 
@@ -120,7 +115,7 @@ public class Contact {
     }
 
     public void setRemarkName(String remarkName) {
-        this.remarkName = remarkName;
+        this.remarkName = replaceEmoji(remarkName);
     }
 
     public int getHideInputBarFlag() {
@@ -272,7 +267,7 @@ public class Contact {
     }
 
     public void setDisplayName(String displayName) {
-        this.displayName = displayName;
+        this.displayName = replaceEmoji(displayName);
     }
 
     public int getChatRoomId() {
@@ -319,14 +314,6 @@ public class Contact {
         return memberMap;
     }
 
-    public String getOwner() {
-        return owner;
-    }
-
-    public void setOwner(String owner) {
-        this.owner = owner;
-    }
-
     @Override
     public boolean equals(Object o) {
         if (this == o) {
@@ -357,5 +344,26 @@ public class Contact {
         result = 31 * result + nickName.hashCode();
         result = 31 * result + chatRoomId;
         return result;
+    }
+
+    private String replaceEmoji(String name) {
+        if(name == null) {
+            return null;
+        }
+
+        while(name.contains("<span class=\"emoji")) {
+            int st = name.indexOf("<span class=\"emoji");
+            int et = name.indexOf("</span>", st);
+
+            String name0 = name.substring(0, st);
+
+            if(st >= 0) {
+                name0 += "口";
+            }
+
+            name = name0 + (name.substring(et + 7, name.length()));
+        }
+
+        return name;
     }
 }

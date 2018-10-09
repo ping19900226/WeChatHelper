@@ -4,17 +4,21 @@ import java.util.Collections;
 public class SortTest {
 
    public static void main(String[] args) {
-      String[] str = {"abb", "ac", "Ia", "ia", "bg", "B"};
+      String name = "<span class=\"emoji emoji1f4b0\"></span>万元户<span class=\"emoji emoji1f3e1\"></span>";
 
-      Collections.sort(Arrays.asList(str));
+      while(name.contains("<span class=\"emoji")) {
+         int st = name.indexOf("<span class=\"emoji");
+         int et = name.indexOf("</span>", st);
 
-      System.out.println(Arrays.toString(str));
+         String name0 = name.substring(0, st);
 
-      System.out.println(System.getProperty("user.home"));
-      System.out.println(System.getProperty("user.dir"));
-      System.out.println(System.getProperty("path.separator"));
-      System.out.println(System.getProperty("file.separator"));
+         if(st >= 0) {
+            name0 += "口";
+         }
 
-      System.out.println(Arrays.toString("1bc|df|df".split("\\|")));
+         name = name0 + (name.substring(et + 7, name.length()));
+      }
+
+      System.out.println(name);
    }
 }

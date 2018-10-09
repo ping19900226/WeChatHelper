@@ -8,19 +8,17 @@ public class Task {
     private String username;
     private String publishUserName;
     private int memberCount;
-    private String owner;
     //private Map<String, Contact> memberList;
     private Map<String, Set<String>> readUsers = new HashMap<>();
 
     public Task() {
     }
 
-    public Task(String content, String username, String publishUserName, int memberCount, String owner) {
+    public Task(String content, String username, String publishUserName, int memberCount) {
         this.content = content;
         this.username = username;
         this.publishUserName = publishUserName;
         this.memberCount = memberCount;
-        this.owner = owner;
     }
 
     public String getContent() {
@@ -53,14 +51,6 @@ public class Task {
 
     public void setMemberCount(int memberCount) {
         this.memberCount = memberCount;
-    }
-
-    public String getOwner() {
-        return owner;
-    }
-
-    public void setOwner(String owner) {
-        this.owner = owner;
     }
 
     public Set<String> getReadUsers(String key) {

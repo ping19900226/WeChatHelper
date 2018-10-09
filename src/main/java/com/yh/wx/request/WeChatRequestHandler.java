@@ -132,7 +132,6 @@ public class WeChatRequestHandler extends RequestHandler {
         AuthInfo info = (AuthInfo) getDefaultAuthenticationInfo().getLoginInfo();
         log.info("Get contact list with auth info:" + info);
         String content = getContent("https://wx.qq.com/cgi-bin/mmwebwx-bin/webwxgetcontact?r=1" +  + System.currentTimeMillis() + "&seq=0&skey=" + info.getSkey());
-        log.info("__________________Contact list : " + content);
         List<Contact> data = new ArrayList<Contact>();
         JSONObject resp = JSON.parseObject(content);
         if(resp.getJSONObject("BaseResponse").getIntValue("Ret") == 0) {
@@ -186,7 +185,6 @@ public class WeChatRequestHandler extends RequestHandler {
                 JSONObject resp = JSON.parseObject(text);
 
                 if(resp.getJSONObject("BaseResponse").getIntValue("Ret") == 0) {
-                    AuthInfo infpo =  ((AuthInfo) getDefaultAuthenticationInfo().getLoginInfo());
                     JSONArray contactList = resp.getJSONArray("ContactList");
 
                     JSONObject user = resp.getJSONObject("User");
@@ -387,8 +385,12 @@ public class WeChatRequestHandler extends RequestHandler {
                 }
             }
 
-            ((AuthInfo) getDefaultAuthenticationInfo().getLoginInfo())
-                .setSyncKey(getSyncKey(resp.getJSONObject("SyncKey")));
+            String syncKey0 = getSyncKey(resp.getJSONObject("SyncKey"));
+
+            if(syncKey0 != null) {
+                ((AuthInfo) getDefaultAuthenticationInfo().getLoginInfo())
+                    .setSyncKey(syncKey0);
+            }
         }
         else {
             System.out.println(" list content ");

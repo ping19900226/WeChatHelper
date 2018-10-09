@@ -55,11 +55,13 @@ public class RecordChatChecker implements ChatChecker {
 
         if(cs[1].contains("@" + name + " ")) {
             atMe(fromUserName, cs[0], cs[1], name, handler);
+            return;
         }
 
         if(cs[1].startsWith(startKeyWord)) {
             String content = cs[1].replace(startKeyWord, "");
             addTask(fromUserName, cs[0], content, handler);
+            return;
         }
 
         checkAndStatistics(fromUserName, cs[0], cs[1], handler);
@@ -118,7 +120,7 @@ public class RecordChatChecker implements ChatChecker {
             "， start_keyword=" + startKeyWord + ", end_keyword=" + endKeyWord + ", " +
             "statistics_keyword=" + statisticsKeyWord + ", replay_keyword=" +
             Arrays.toString(optionKeyWords.toArray()) + ", publish_user=" +
-            task.getPublishUserName() + ", owner=" + task.getOwner());
+            task.getPublishUserName());
 
         String answer = "";
 
@@ -138,7 +140,6 @@ public class RecordChatChecker implements ChatChecker {
 
             contact.setMemberList(contactDetails);
             contact.setInitMenber(true);
-            task.setOwner(contact.getOwner());
         }
     }
 
@@ -150,8 +151,7 @@ public class RecordChatChecker implements ChatChecker {
                 Task task = Monitor.get().getTask(fromUserName);
 
                 if(task != null) {
-                    if(message.equals(endKeyWord) && (fromUserName.equals(task.getPublishUserName())
-                        || fromUserName.equals(task.getOwner())))
+                    if(message.equals(endKeyWord) && sendUserName.equals(task.getPublishUserName()))
                     {
                         end(fromUserName, task, handler);
                         return;
@@ -166,10 +166,11 @@ public class RecordChatChecker implements ChatChecker {
                         }
 
                         readUserList.add(sendUserName);
+                        return;
                     }
 
-                    if(message.startsWith(statisticsKeyWord) && (fromUserName.equals(task.getOwner())
-                    || fromUserName.equals(task.getPublishUserName())))
+                    if(message.startsWith(statisticsKeyWord) &&
+                        sendUserName.equals(task.getPublishUserName()))
                     {
                         statistics(message.replace(statisticsKeyWord, ""), fromUserName,
                             task, handler);
