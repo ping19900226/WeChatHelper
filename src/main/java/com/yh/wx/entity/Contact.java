@@ -1,6 +1,7 @@
 package com.yh.wx.entity;
 
 import java.util.List;
+import java.util.Map;
 
 public class Contact {
 
@@ -8,7 +9,7 @@ public class Contact {
     public static final int CONTACT_FLAG_WECHAT_SUBCRIBE = 3;
     public static final int CONTACT_FLAG_GROUP = 0;
     public static final int CONTACT_FLAG_WECHAT_SERVICE = 2051;
-    public static final int CONTACT_FLAG_WECHAT= 1;
+    public static final int CONTACT_FLAG_WECHAT = 1;
     public static final int CONTACT_FLAG_FILE_HELPER = 2;
     public static final int CONTACT_FLAG_WECHAT_YUNDONG = 3;
     public static final int CONTACT_FLAG_WECHAT_TUANDUI = 56;
@@ -45,6 +46,8 @@ public class Contact {
     private String encryChatRoomId;
     private int isOwner;
     private boolean initMenber;
+    private Map<String, Contact> memberMap;
+    private String owner;
 
     public int getUin() {
         return uin;
@@ -100,6 +103,10 @@ public class Contact {
 
     public void setMemberList(List<Contact> memberList) {
         this.memberList = memberList;
+
+        for (Contact c : memberList) {
+            memberMap.put(c.getUserName(), c);
+        }
     }
 
     public String getRemarkName() {
@@ -161,6 +168,7 @@ public class Contact {
     public String getpYQuanPin() {
         return pYQuanPin;
     }
+
     public void setpYQuanPin(String pYQuanPin) {
         this.pYQuanPin = pYQuanPin;
     }
@@ -180,6 +188,7 @@ public class Contact {
     public void setRemarkPYQuanPin(String remarkPYQuanPin) {
         this.remarkPYQuanPin = remarkPYQuanPin;
     }
+
     public int getStarFriend() {
         return starFriend;
     }
@@ -292,29 +301,51 @@ public class Contact {
         this.isOwner = isOwner;
     }
 
-    @Override public boolean equals(Object o) {
-        if(this == o) {
+    public boolean isInitMenber() {
+        return initMenber;
+    }
+
+    public void setInitMenber(boolean initMenber) {
+        this.initMenber = initMenber;
+    }
+
+    public Map<String, Contact> getMemberMap() {
+        return memberMap;
+    }
+
+    public String getOwner() {
+        return owner;
+    }
+
+    public void setOwner(String owner) {
+        this.owner = owner;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
             return true;
         }
-        if(o == null || getClass() != o.getClass()) {
+        if (o == null || getClass() != o.getClass()) {
             return false;
         }
 
         Contact contact = (Contact) o;
 
-        if(uin != contact.uin) {
+        if (uin != contact.uin) {
             return false;
         }
-        if(chatRoomId != contact.chatRoomId) {
+        if (chatRoomId != contact.chatRoomId) {
             return false;
         }
-        if(!userName.equals(contact.userName)) {
+        if (!userName.equals(contact.userName)) {
             return false;
         }
         return nickName.equals(contact.nickName);
     }
 
-    @Override public int hashCode() {
+    @Override
+    public int hashCode() {
         int result = uin;
         result = 31 * result + userName.hashCode();
         result = 31 * result + nickName.hashCode();

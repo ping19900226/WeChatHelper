@@ -8,6 +8,7 @@ import java.util.*;
 public class ContactCache {
     private static ContactCache contactCache;
     private Log log = LogFactory.getLog(ContactCache.class);
+    private Map<String, Contact> contactDataCache = new HashMap<String, Contact>();
 
     private ContactCache() {
 
@@ -21,12 +22,10 @@ public class ContactCache {
         return contactCache;
     }
 
-    private Map<String, Contact> contactList = new HashMap<String, Contact>();
-
     public List<Contact> getContactList() {
         List<Contact> contacts = new ArrayList<Contact>();
 
-        for(Map.Entry<String, Contact> entry : contactList.entrySet()) {
+        for(Map.Entry<String, Contact> entry : contactDataCache.entrySet()) {
             contacts.add(entry.getValue());
         }
 
@@ -35,15 +34,30 @@ public class ContactCache {
 
     public void setContactList(List<Contact> contactList) {
         for(Contact c : contactList) {
-            this.contactList.put(c.getUserName(), c);
+            this.contactDataCache.put(c.getUserName(), c);
+        }
+    }
+
+    public void updateContactMemberList(String username, List<Contact> memberList) {
+        Contact contact = getContact(username);
+
+        if(contact != null) {
+            contact.setMemberList(memberList);
+
+            for(Contact member : memberList) {
+                if(member.getIsOwner() == 1) {
+                    contact.setOwner(member.getOwner());
+                    return;
+                }
+            }
         }
     }
 
     public Contact getContact(String username) {
-        return contactList.get(username);
+        return contactDataCache.get(username);
     }
 
     public void addContact(Contact con) {
-        contactList.put(con.getUserName(), con);
+        contactDataCache.put(con.getUserName(), con);
     }
 }

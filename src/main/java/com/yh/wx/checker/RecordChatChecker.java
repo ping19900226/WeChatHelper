@@ -4,7 +4,6 @@ import com.yh.wx.entity.*;
 import com.yh.wx.request.WeChatRequestHandler;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-
 import java.util.*;
 
 /**
@@ -14,7 +13,6 @@ public class RecordChatChecker implements ChatChecker {
     private static final Log log = LogFactory.getLog(RecordChatChecker.class);
     private String startKeyWord;
     private String endKeyWord;
-    private boolean checking = false;
     private List<String> optionKeyWords;
     private String statisticsKeyWord;
 
@@ -52,8 +50,8 @@ public class RecordChatChecker implements ChatChecker {
             cs[0] = cs[0].replace(":", "");
         }
 
-        String name = info.getDisplayName() != null && !info.getDisplayName().isEmpty() ? info.getDisplayName() :
-            info.getNickName();
+        String name = info.getDisplayName() != null && !info.getDisplayName().isEmpty() ?
+            info.getDisplayName() : info.getNickName();
 
         if(cs[1].contains("@" + name + " ")) {
             atMe(fromUserName, cs[0], cs[1], name, handler);
@@ -99,16 +97,21 @@ public class RecordChatChecker implements ChatChecker {
         addTask(fromUserName, sendUserName, content, handler);
     }
 
-    private void addTask(String fromUserName, String sendUserName, String message, WeChatRequestHandler handler)
-        throws Exception
+    private void addTask(String fromUserName, String sendUserName, String message,
+        WeChatRequestHandler handler) throws Exception
     {
+        Task task = Monitor.get().getTask(fromUserName);
+
+        if(task != null) {
+            return;
+        }
+
         Contact contact = ContactCache.get().getContact(fromUserName);
-        Task task = new Task();
+        task = new Task();
         task.setContent(message);
         task.setMemberCount(contact.getMemberCount());
         task.setPublishUserName(sendUserName);
         task.setUsername(fromUserName);
-        Monitor.get().monitor(fromUserName);
         Monitor.get().addTask(fromUserName, task);
         log.info("Start to record, [nick_name=" + contact.getNickName() + ", display_name=" +
             contact.getDisplayName() + ", member_count=" + task.getMemberCount() +
@@ -128,9 +131,14 @@ public class RecordChatChecker implements ChatChecker {
 
         handler.sendMesg("请回复：" + answer, fromUserName);
 
-        List<Contact> contactDetails = handler.batchGetContact(contact.getEncryChatRoomId(),
-            contact.getMemberList());
-        task.setMemberList(contactDetails);
+        if(!contact.isInitMenber()) {
+            List<Contact> contactDetails = handler.batchGetContact(contact.getEncryChatRoomId(),
+                contact.getMemberList());
+
+            contact.setMemberList(contactDetails);
+            contact.setInitMenber(true);
+            task.setOwner(contact.getOwner());
+        }
     }
 
     private void checkAndStatistics(String fromUserName, String sendUserName, String message,
@@ -141,7 +149,9 @@ public class RecordChatChecker implements ChatChecker {
                 Task task = Monitor.get().getTask(fromUserName);
 
                 if(task != null) {
-                    if(message.equals(endKeyWord)) {
+                    if(message.equals(endKeyWord) && fromUserName.equals(task.getPublishUserName())
+                        || fromUserName.equals(task.getOwner()))
+                    {
                         end(fromUserName, task, handler);
                         return;
                     }
@@ -157,8 +167,11 @@ public class RecordChatChecker implements ChatChecker {
                         readUserList.add(sendUserName);
                     }
 
-                    if(message.startsWith(statisticsKeyWord)) {
-                        statistics(message.replace(statisticsKeyWord, ""), fromUserName, task, handler);
+                    if(message.startsWith(statisticsKeyWord) && fromUserName.equals(task.getOwner())
+                    || fromUserName.equals(task.getPublishUserName()))
+                    {
+                        statistics(message.replace(statisticsKeyWord, ""), fromUserName,
+                            task, handler);
                     }
                 }
             }
@@ -167,7 +180,7 @@ public class RecordChatChecker implements ChatChecker {
 
     private void end(String fromUserName, Task task, WeChatRequestHandler handler) throws Exception
     {
-        Monitor.get().removeTask(fromUserName, null);
+        Monitor.get().removeTask(fromUserName);
         statistics(null, fromUserName, task, handler);
     }
 
@@ -176,6 +189,7 @@ public class RecordChatChecker implements ChatChecker {
     {
         handler.sendMesg("正在进行回复信息统计，请稍等...", fromUserName);
         Set<String> users;
+        Contact contact = ContactCache.get().getContact(fromUserName);
 
         if(!mesg.isEmpty()) {
             users = task.getReadUsers(mesg);
@@ -188,42 +202,41 @@ public class RecordChatChecker implements ChatChecker {
 
         String r = users.size() + "/" + task.getMemberCount() +
             "人回复了信息：\n";
+        r += build(users, contact);
 
         List<String> allUser = new ArrayList<String>();
 
-        for(Map.Entry<String, Contact> entry : task.getMemberList().entrySet()) {
-            allUser.add(entry.getKey());
-        }
-
-        for(String u : users) {
-            Contact c = task.getMemberList().get(u);
-
-            if(c == null) {
-                log.info("User empty");
-                continue;
-            }
-
-            r += (c.getDisplayName() == null || c.getDisplayName().isEmpty() ? c.getNickName() :
-                c.getDisplayName()) + "\n";
+        for(Contact c : contact.getMemberList()) {
+            allUser.add(c.getUserName());
         }
 
         allUser.removeAll(users);
+        r += "\n以下人员未回复信息\n";
+        r += build(allUser, contact);
 
-        r += "以下人员未回复信息\n";
+        log.info("Statistics: " + r);
+        handler.sendMesg(r, fromUserName);
+    }
+
+    private String build(Collection<String> allUser, Contact contact) {
+        String r = "";
 
         for(String u : allUser) {
-            Contact c = task.getMemberList().get(u);
+            Contact member = contact.getMemberMap().get(u);
 
-            if(c == null) {
+            if(member == null) {
                 log.info("User empty");
                 continue;
             }
 
-            r += (c.getDisplayName() == null || c.getDisplayName().isEmpty() ? c.getNickName() :
-                c.getDisplayName()) + "\n";
+            if(r.length() > 0) {
+                r += "\n";
+            }
+
+            r += member.getDisplayName() == null || member.getDisplayName().isEmpty() ?
+                member.getNickName() : member.getDisplayName();
         }
 
-        log.info("Statistics: " + r);
-        handler.sendMesg(r, fromUserName);
+        return r;
     }
 }

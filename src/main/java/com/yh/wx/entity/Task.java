@@ -9,7 +9,7 @@ public class Task {
     private String publishUserName;
     private int memberCount;
     private String owner;
-    private Map<String, Contact> memberList;
+    //private Map<String, Contact> memberList;
     private Map<String, Set<String>> readUsers = new HashMap<>();
 
     public Task() {
@@ -61,18 +61,6 @@ public class Task {
 
     public void setOwner(String owner) {
         this.owner = owner;
-    }
-
-    public Map<String, Contact> getMemberList() {
-        return memberList;
-    }
-
-    public void setMemberList(List<Contact> memberList) {
-        this.memberList = new HashMap<String, Contact>();
-
-        for(Contact c : memberList) {
-            this.memberList.put(c.getUserName(), c);
-        }
     }
 
     public Set<String> getReadUsers(String key) {

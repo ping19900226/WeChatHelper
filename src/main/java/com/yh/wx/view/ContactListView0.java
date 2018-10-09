@@ -112,8 +112,6 @@ public class ContactListView0 extends View {
             }
 
             setOnMouseClick(l, sl, rsArea);
-            setContextMenu(l);
-
             userList.getChildren().add(l);
         }
 
@@ -213,35 +211,5 @@ public class ContactListView0 extends View {
              }
           }
        });
-    }
-
-    private void setContextMenu(Label l) {
-        ContextMenu menu = new ContextMenu();
-        MenuItem record = new MenuItem("接龙统计");
-        record.setUserData(l.getUserData());
-        menu.getItems().add(record);
-        addRecordHanlder(record);
-        l.setContextMenu(menu);
-    }
-
-    private void addRecordHanlder(MenuItem record) {
-        record.setOnAction(new EventHandler<ActionEvent>() {
-            @Override
-            public void handle(ActionEvent event) {
-                Contact con = (Contact) ((MenuItem)event.getSource()).getUserData();
-                Monitor.get().monitor(con.getUserName());
-
-                Contact contact = ContactCache.get().getContact(con.getUserName());
-                contact = contact == null ? con : contact;
-                ContactCache.get().addContact(con);
-
-                try {
-                    contact.setMemberList(handler.batchGetContact(contact.getUserName(), contact.getMemberList()));
-                } catch (Exception e) {
-                    log.error("Failed to get member list: " + e.getMessage());
-                    Monitor.get().removeTask(contact.getUserName(), null);
-                }
-            }
-        });
     }
 }
