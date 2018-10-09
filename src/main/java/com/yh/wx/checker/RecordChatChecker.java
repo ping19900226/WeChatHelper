@@ -111,8 +111,9 @@ public class RecordChatChecker implements ChatChecker {
         Monitor.get().monitor(fromUserName);
         Monitor.get().addTask(fromUserName, task);
         log.info("Start to record, [nick_name=" + contact.getNickName() + ", display_name=" +
-            contact.getDisplayName() + ", member_count=" + task.getMemberCount() + "， start_keyword=" + startKeyWord
-            + ", end_keyword=" + endKeyWord + ", statistics_keyword=" + statisticsKeyWord + ", replay_keyword=" +
+            contact.getDisplayName() + ", member_count=" + task.getMemberCount() +
+            "， start_keyword=" + startKeyWord + ", end_keyword=" + endKeyWord + ", " +
+            "statistics_keyword=" + statisticsKeyWord + ", replay_keyword=" +
             Arrays.toString(optionKeyWords.toArray()));
 
         String answer = "";
@@ -132,16 +133,8 @@ public class RecordChatChecker implements ChatChecker {
         task.setMemberList(contactDetails);
     }
 
-    /**
-     * 检测回复的信息中是否包含关键词，如果包含，进行响应的操作。
-     * @param fromUserName
-     * @param sendUserName
-     * @param message
-     * @param handler
-     * @throws Exception
-     */
-    private void checkAndStatistics(String fromUserName, String sendUserName, String message, WeChatRequestHandler handler)
-        throws Exception
+    private void checkAndStatistics(String fromUserName, String sendUserName, String message,
+        WeChatRequestHandler handler) throws Exception
     {
         for(String uu : Monitor.get().getMonitor()) {
             if(fromUserName.equals(uu)) {

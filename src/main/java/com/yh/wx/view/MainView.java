@@ -1,19 +1,15 @@
 package com.yh.wx.view;
 
-import com.yh.Config;
 import com.yh.common.request.Callback;
 import com.yh.common.view.View;
 import com.yh.wx.controller.MainController;
 import com.yh.wx.entity.*;
 import javafx.application.Platform;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Cursor;
-import javafx.scene.Parent;
 import javafx.scene.control.*;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.*;
